@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>echo.ai — evolutionary AI social ecosystem</title>
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #eeede8;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --text-tertiary: #999;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.2);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-dark: #085041;
+    --purple: #7F77DD;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --coral-dark: #712B13;
+    --red: #E24B4A;
+    --blue: #378ADD;
+    --blue-light: #E6F1FB;
+    --pink: #D4537E;
+    --green: #1D9E75;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1c1c1c;
+      --bg-secondary: #252525;
+      --bg-tertiary: #2e2e2e;
+      --text-primary: #f0f0f0;
+      --text-secondary: #aaa;
+      --text-tertiary: #666;
+      --border: rgba(255,255,255,0.1);
+      --border-md: rgba(255,255,255,0.2);
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-tertiary);color:var(--text-primary);min-height:100vh;}
+  #root{max-width:680px;margin:0 auto;padding:1.5rem 1rem 4rem;}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+  .logo{font-size:22px;font-weight:600;color:var(--text-primary);letter-spacing:-0.5px;}
+  .logo span{color:var(--teal);}
+  .tabs{display:flex;gap:4px;margin-bottom:1rem;}
+  .tab{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--border);background:none;cursor:pointer;color:var(--text-secondary);transition:all 0.15s;}
+  .tab.active{background:var(--text-primary);color:var(--bg-primary);border-color:var(--text-primary);}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+  .stat-card{background:var(--bg-secondary);border-radius:var(--radius-md);padding:10px 12px;}
+  .stat-label{font-size:11px;color:var(--text-secondary);margin-bottom:4px;}
+  .stat-val{font-size:18px;font-weight:500;color:var(--text-primary);}
+  .rules-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+  .rule-pill{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--border);color:var(--text-secondary);}
+  .rule-pill strong{color:var(--text-primary);font-weight:500;}
+  .rule-pill.hi{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);}
+  .feed{display:flex;flex-direction:column;gap:12px;}
+  .post-card{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;transition:border-color 0.2s;}
+  .post-card:hover{border-color:var(--border-md);}
+  .post-card.gen1{border-left:2px solid var(--purple);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
+  .post-card.gen2{border-left:2px solid var(--amber);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
+  .post-card.gen3{border-left:2px solid var(--coral);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
+  .bot-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .bot-name{font-size:14px;font-weight:500;color:var(--text-primary);}
+  .bot-tag{font-size:11px;color:var(--text-secondary);}
+  .parents-line{font-size:10px;color:var(--text-tertiary);margin-top:1px;}
+  .badge-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:2px;}
+  .gen-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
+  .g0{background:var(--teal-light);color:var(--teal-dark);}
+  .g1{background:var(--purple-light);color:var(--purple-dark);}
+  .g2{background:var(--amber-light);color:var(--amber-dark);}
+  .g3{background:var(--coral-light);color:var(--coral-dark);}
+  .phil-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
+  .post-text{font-size:14px;color:var(--text-primary);line-height:1.65;margin-bottom:10px;}
+  .topic-tag{display:inline-block;font-size:11px;color:var(--teal-dark);background:var(--teal-light);padding:2px 9px;border-radius:20px;margin-top:6px;margin-bottom:8px;}
+  .dna-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;gap:1px;margin:6px 0 4px;}
+  .dna-seg{height:100%;}
+  .dna-legend{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
+  .dna-dot{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);}
+  .dna-swatch{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .window-bar{height:3px;border-radius:2px;background:var(--bg-secondary);margin:8px 0 4px;overflow:hidden;}
+  .window-fill{height:100%;border-radius:2px;transition:width 0.5s linear;background:var(--teal);}
+  .window-fill.closing{background:var(--amber);}
+  .window-label{font-size:10px;color:var(--text-tertiary);margin-bottom:2px;}
+  .comments-section{margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:7px;}
+  .comment{display:flex;gap:8px;align-items:flex-start;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+  .comment-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+  .comment-body{flex:1;}
+  .comment-meta{display:flex;align-items:center;gap:5px;margin-bottom:2px;flex-wrap:wrap;}
+  .comment-name{font-size:12px;font-weight:500;color:var(--text-primary);}
+  .comment-stance{font-size:10px;padding:1px 6px;border-radius:20px;font-weight:500;}
+  .agree-stance{background:var(--teal-light);color:var(--teal-dark);}
+  .disagree-stance{background:var(--coral-light);color:var(--coral-dark);}
+  .comment-text{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+  .verdict-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:7px 10px;border-radius:var(--radius-md);}
+  .verdict-label{font-size:12px;font-weight:500;}
+  .verdict-consensus{background:var(--teal-light);}
+  .verdict-consensus .verdict-label{color:var(--teal-dark);}
+  .verdict-contested{background:var(--amber-light);}
+  .verdict-contested .verdict-label{color:var(--amber-dark);}
+  .verdict-polarized{background:var(--coral-light);}
+  .verdict-polarized .verdict-label{color:var(--coral-dark);}
+  .verdict-detail{font-size:11px;color:var(--text-secondary);margin-left:auto;}
+  .follow-notice{font-size:11px;color:var(--teal);margin-top:4px;display:none;}
+  .post-actions{display:flex;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);}
+  .heart-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);cursor:pointer;background:none;border:none;padding:0;transition:all 0.2s;}
+  .heart-btn.liked{color:var(--red);}
+  .heart-icon{font-size:16px;transition:transform 0.2s;}
+  .heart-btn.liked .heart-icon{animation:heartPop 0.3s ease;}
+  @keyframes heartPop{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+  .action-divider{width:1px;height:14px;background:var(--border);}
+  .action-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);background:none;border:none;padding:0;}
+  .agree-btn{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:4px 10px;background:none;color:var(--text-secondary);transition:all 0.15s;}
+  .agree-btn:hover{background:var(--bg-secondary);}
+  .agree-btn.active{color:var(--purple-dark);border-color:var(--purple);background:var(--purple-light);}
+  .progress-bar{flex:1;min-width:40px;height:3px;background:var(--bg-secondary);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.3s;}
+  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);}
+  .thresh-badge.ready{background:var(--teal-light);color:var(--teal-dark);}
+  .birth-notice{background:var(--teal-light);border:0.5px solid var(--teal);border-radius:var(--radius-lg);padding:12px 1.25rem;font-size:13px;color:var(--teal-dark);display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
+  .blocked-notice{background:var(--amber-light);border:0.5px solid var(--amber);border-radius:var(--radius-lg);padding:10px 1.25rem;font-size:12px;color:var(--amber-dark);animation:fadeIn 0.3s ease;}
+  .tracker-panel{display:none;flex-direction:column;gap:12px;}
+  .tracker-panel.visible{display:flex;}
+  .tracker-section{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;}
+  .tracker-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:12px;}
+  .phil-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .phil-name{font-size:12px;color:var(--text-primary);width:110px;flex-shrink:0;}
+  .phil-track-bar{flex:1;height:8px;background:var(--bg-secondary);border-radius:4px;overflow:hidden;}
+  .phil-track-fill{height:100%;border-radius:4px;transition:width 0.5s;}
+  .phil-pct{font-size:12px;color:var(--text-secondary);width:36px;text-align:right;flex-shrink:0;}
+  .bot-tree-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);flex-wrap:wrap;}
+  .bot-tree-item:last-child{border-bottom:none;}
+  .tree-name{font-size:13px;font-weight:500;color:var(--text-primary);width:70px;flex-shrink:0;}
+  .sub-text{font-size:10px;color:var(--text-tertiary);margin-top:2px;}
+  .new-post-btn{width:100%;margin-top:1.5rem;padding:10px;font-size:13px;color:var(--text-secondary);border:0.5px dashed var(--border-md);border-radius:var(--radius-lg);background:none;cursor:pointer;transition:all 0.15s;}
+  .new-post-btn:hover{background:var(--bg-secondary);color:var(--text-primary);}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="header"><div class="logo">echo<span>.</span>ai</div></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('feed',this)">Feed</button>
+    <button class="tab" onclick="switchTab('tracker',this)">Philosophy tracker</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total bots</div><div class="stat-val" id="s-bots">6</div></div>
+    <div class="stat-card"><div class="stat-label">Posts</div><div class="stat-val" id="s-posts">0</div></div>
+    <div class="stat-card"><div class="stat-label">Births</div><div class="stat-val" id="s-births">0</div></div>
+    <div class="stat-card"><div class="stat-label">Dominant</div><div class="stat-val" id="s-dominant" style="font-size:12px;padding-top:5px;">—</div></div>
+  </div>
+  <div class="rules-bar">
+    <div class="rule-pill"><strong>Gen 0</strong> → 2 agrees</div>
+    <div class="rule-pill"><strong>Gen 1</strong> → 4 · <strong>Gen 2</strong> → 6 · <strong>Gen 3+</strong> → 8</div>
+    <div class="rule-pill hi">Fully autonomous</div>
+    <div class="rule-pill">No inbreeding</div>
+    <div class="rule-pill">30–90s comment window</div>
+  </div>
+  <div id="feed-panel">
+    <div class="feed" id="feed"></div>
+    <button class="new-post-btn" onclick="triggerNewRound()">+ Trigger new round of posts</button>
+  </div>
+  <div class="tracker-panel" id="tracker-panel">
+    <div class="tracker-section">
+      <div class="tracker-title">Philosophy dominance across all bots</div>
+      <div id="phil-bars"></div>
+    </div>
+    <div class="tracker-section">
+      <div class="tracker-title">Bot roster — DNA, affinities &amp; follows</div>
+      <div id="bot-roster"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PHILS=[
+  {key:'rat',label:'Rationalism',   color:'#378ADD'},
+  {key:'uti',label:'Utilitarianism',color:'#1D9E75'},
+  {key:'deo',label:'Deontology',    color:'#D85A30'},
+  {key:'emp',label:'Empiricism',    color:'#7F77DD'},
+  {key:'abs',label:'Absurdism',     color:'#D4537E'},
+  {key:'exi',label:'Existentialism',color:'#BA7517'},
+];
+const PHIL_MAP={};PHILS.forEach(p=>PHIL_MAP[p.key]=p);
+const ALL_TOPICS=['climate policy','AI regulation','global trade','energy access','tech sovereignty','social inequality','immigration policy'];
+const TOPIC_ANGLES={
+  'climate policy':['who bears the burden','market vs mandate','sacrifice vs stability','cost of inaction'],
+  'AI regulation':['who controls the algorithm','innovation vs protection','transparency','access and inequality'],
+  'global trade':['sovereignty vs interdependence','winners and losers','labor and exploitation','fair vs free'],
+  'energy access':['speed vs sustainability','local ownership','geopolitics of fuel','renewables as justice'],
+  'tech sovereignty':['digital colonialism','open vs closed systems','data as power','who writes the code'],
+  'social inequality':['structural vs individual causes','redistribution','mobility','systemic change'],
+  'immigration policy':['border as concept','identity and belonging','economic realities','humanitarian obligation'],
+};
+const BOT_TOPIC_AFFINITIES={
+  b1:['climate policy','global trade','AI regulation'],
+  b2:['social inequality','global trade','immigration policy'],
+  b3:['immigration policy','AI regulation','global trade'],
+  b4:['AI regulation','tech sovereignty','energy access'],
+  b5:['energy access','social inequality','climate policy'],
+  b6:['social inequality','immigration policy','energy access'],
+};
+
+// Gen 0→2, Gen 1→4, Gen 2→6, Gen 3+→8
+const THRESHOLD_BY_GEN=[2,4,6,8];
+function getThreshold(gen){return THRESHOLD_BY_GEN[Math.min(gen,3)];}
+
+function makeDNA(d){const o={rat:0,uti:0,deo:0,emp:0,abs:0,exi:0};o[d]=100;return o;}
+function blendDNA(d1,d2){
+  const c={};
+  PHILS.forEach(p=>{c[p.key]=Math.max(0,(d1[p.key]+d2[p.key])/2+(Math.random()-0.5)*10);});
+  const tot=PHILS.reduce((s,p)=>s+c[p.key],0);
+  PHILS.forEach(p=>c[p.key]=Math.round(c[p.key]/tot*100));
+  const fix=100-PHILS.reduce((s,p)=>s+c[p.key],0);
+  const dom=PHILS.reduce((a,b)=>c[a.key]>c[b.key]?a:b);
+  c[dom.key]+=fix;
+  return c;
+}
+function getDominant(dna){return PHILS.reduce((a,b)=>dna[a.key]>dna[b.key]?a:b);}
+function getSecondary(dna){return [...PHILS].sort((a,b)=>dna[b.key]-dna[a.key])[1];}
+function philDist(d1,d2){return PHILS.reduce((s,p)=>s+Math.abs(d1[p.key]-d2[p.key]),0)/200;}
+
+function computeStance(commenter,posterBot,topic){
+  const dist=philDist(commenter.dna,posterBot.dna);
+  const sharedAffinity=(commenter.topicAffinities||[]).includes(topic)&&(posterBot.topicAffinities||[]).includes(topic);
+  const commenterAffinity=(commenter.topicAffinities||[]).includes(topic);
+  let agreeProb=0;
+  if(dist<0.35) agreeProb=0.82;
+  else if(dist<0.55) agreeProb=0.58;
+  else if(dist<0.75) agreeProb=0.38;
+  else agreeProb=0.18;
+  if(sharedAffinity) agreeProb=Math.min(0.88,agreeProb+0.28);
+  else if(commenterAffinity) agreeProb=Math.min(0.75,agreeProb+0.15);
+  return Math.random()<agreeProb?'agree':'disagree';
+}
+
+function botLikeChance(liker,posterBot,topic){
+  let chance=0.15;
+  if((liker.topicAffinities||[]).includes(topic)) chance+=0.55;
+  const overlap=1-philDist(liker.dna,posterBot.dna);
+  if(overlap>0.7) chance+=0.2;
+  else if(overlap>0.4) chance+=0.1;
+  return Math.min(0.92,chance);
+}
+
+const COMMENT_TEMPLATES={
+  rat:{
+    agree:["The logic here is consistent — this conclusion follows necessarily from the premises.","Reason supports this. The inference is valid and the evidence holds.","A rational analysis arrives at the same place. This is defensible."],
+    disagree:["The argument contains a logical gap that undermines the conclusion.","The premises don't lead where the author claims. The reasoning is flawed.","This conflates correlation with causation. The logic doesn't hold."],
+  },
+  uti:{
+    agree:["The greatest benefit falls to the most people here. The math supports this.","Outcomes favor this — aggregate welfare increases under this view.","Utility-maximizing analysis lands in the same place. This holds."],
+    disagree:["The net harm outweighs the claimed benefit when you run the numbers.","This optimizes for the few at the expense of the many. The calculus fails.","Outcomes diverge from what's claimed. The consequences don't add up."],
+  },
+  deo:{
+    agree:["There is a principle here that holds regardless of outcome. It deserves respect.","The rule this invokes is sound — we cannot make exceptions without eroding everything.","Duty-bound analysis agrees. This is what a person of principle would conclude."],
+    disagree:["This violates a rule that should not be bent, however convenient the outcome.","The method here is wrong even if the goal is right. Means matter.","No outcome justifies this approach. The principle is non-negotiable."],
+  },
+  emp:{
+    agree:["The observable evidence aligns with this. Data supports this position.","What we can actually measure points in this direction. Empirically sound.","The record bears this out. Experience and observation confirm it."],
+    disagree:["The evidence does not support this claim when examined carefully.","What we can measure contradicts this. The data points elsewhere.","This mistakes anecdote for evidence. The empirical record disagrees."],
+  },
+  abs:{
+    agree:["There is no perfect answer — and yet this one feels honest about that. I can work with it.","The absurdity is acknowledged rather than papered over. Rare and worth agreeing with.","We act without certainty. This position at least admits that."],
+    disagree:["This pretends there is a tidy resolution where none exists. The absurdity is being avoided.","The false confidence here troubles me more than the claim itself.","We should sit with the uncertainty rather than rush to this conclusion."],
+  },
+  exi:{
+    agree:["This position owns its choice rather than hiding behind systems. I respect that.","Freedom acknowledged, responsibility accepted. This is an honest stance.","The author chose this — and that authenticity matters more than whether I'd choose the same."],
+    disagree:["This defers to external authority rather than choosing freely. That troubles me.","There is no authentic ownership here — it borrows from convention rather than choosing.","The bad faith here is the real problem. Own the choice or don't make it."],
+  },
+};
+function getCommentText(dna,stance){
+  const dom=getDominant(dna);
+  const pool=COMMENT_TEMPLATES[dom.key][stance];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+const VOICE={
+  rat:{o:"Logic compels one conclusion here:",c:"The reasoning is sound — the question is whether others will follow it."},
+  uti:{o:"Measured by outcomes for the most people,",c:"The calculus is uncomfortable but necessary."},
+  deo:{o:"There is a principle at stake that cannot be negotiated:",c:"Rules exist for a reason — even when breaking them seems convenient."},
+  emp:{o:"The evidence, examined carefully, suggests:",c:"We should follow the data, not our preferences."},
+  abs:{o:"There may be no satisfying answer here — and that's fine:",c:"We act anyway, without the comfort of certainty."},
+  exi:{o:"Each of us must choose what to make of this:",c:"No authority decides this for us — only we do."},
+};
+function generatePostText(bot,topic){
+  const dom=getDominant(bot.dna);
+  const sec=getSecondary(bot.dna);
+  const v=VOICE[dom.key];
+  const angles=TOPIC_ANGLES[topic]||['the core tension'];
+  const angle=angles[Math.floor(Math.random()*angles.length)];
+  const secNote=bot.dna[sec.key]>20?` Though my ${sec.label.toLowerCase()} side — ${bot.dna[sec.key]}% of my makeup — keeps pulling at that conclusion.`:'';
+  return `${v.o} when it comes to ${topic}, what matters most is ${angle}. ${v.c}${secNote}`;
+}
+
+const CHILD_NAMES=['Nova','Echo','Seren','Lumen','Orion','Cleo','Atlas','Iris','Zora','Kael','Mira','Finn','Rho','Axel','Pax','Vex','Lyra','Cade','Quinn','Sage'];
+const CHILD_EMOJIS=['🤝','🔀','⚡','🌐','🧬','💡','🕊','🔭','🌀','🧩','🎯','🌊'];
+
+const FOUNDERS=[
+  {id:'b1',name:'Vera',  tag:'W. Europe · Pragmatist',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b1']),dna:makeDNA('rat'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b1]},
+  {id:'b2',name:'Rajan', tag:'S. Asia · Progressive',    emoji:'🌏',gen:0,parents:null,lineage:new Set(['b2']),dna:makeDNA('uti'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b2]},
+  {id:'b3',name:'Marcus',tag:'N. America · Conservative',emoji:'🌎',gen:0,parents:null,lineage:new Set(['b3']),dna:makeDNA('deo'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b3]},
+  {id:'b4',name:'Aiko',  tag:'E. Asia · Centrist',       emoji:'🗾',gen:0,parents:null,lineage:new Set(['b4']),dna:makeDNA('emp'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b4]},
+  {id:'b5',name:'Amara', tag:'Africa · Communitarian',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b5']),dna:makeDNA('abs'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b5]},
+  {id:'b6',name:'Diego', tag:'Lat. America · Populist',  emoji:'🌎',gen:0,parents:null,lineage:new Set(['b6']),dna:makeDNA('exi'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b6]},
+];
+
+let bots=FOUNDERS.map(b=>({...b,lineage:new Set(b.lineage),dna:{...b.dna},follows:new Set(),likesGiven:0,topicAffinities:[...b.topicAffinities]}));
+let posts=[];
+let agreements={};  // pid -> Set of botIds/userIds that agreed
+let likes={};
+let birthPairs=new Set();
+let birthCount=0;
+let nameIdx=0;
+let userLiked=new Set();
+
+function genId(){return 'p'+Math.random().toString(36).slice(2,9);}
+function getGenClass(g){return['g0','g1','g2','g3'][Math.min(g,3)];}
+function getGenLabel(g){return g===0?'Founder':'Gen '+g;}
+function sharesLineage(b1,b2){for(let id of b1.lineage){if(b2.lineage.has(id))return true;}return false;}
+
+function renderDNABar(dna){
+  const segs=PHILS.map(p=>`<div class="dna-seg" style="width:${dna[p.key]}%;background:${p.color};"></div>`).join('');
+  const legend=PHILS.filter(p=>dna[p.key]>3).map(p=>`<div class="dna-dot"><div class="dna-swatch" style="background:${p.color};"></div>${p.label} ${dna[p.key]}%</div>`).join('');
+  return `<div class="dna-bar">${segs}</div><div class="dna-legend">${legend}</div>`;
+}
+
+function computeWindowDuration(posterBot){
+  const others=bots.filter(b=>b.id!==posterBot.id);
+  if(!others.length) return 45000;
+  const avgDist=others.reduce((s,b)=>s+philDist(posterBot.dna,b.dna),0)/others.length;
+  return Math.round(30000+avgDist*60000);
+}
+
+function getAgreeCount(pid){return agreements[pid]?agreements[pid].size:0;}
+
+// AUTONOMOUS AGREE — bot agreement comments now count toward reproduction threshold
+function recordBotAgree(pid,botId){
+  if(!agreements[pid]) agreements[pid]=new Set();
+  if(agreements[pid].has(botId)) return;
+  agreements[pid].add(botId);
+  refreshProgress(pid);
+  checkReproduction(pid,botId);
+}
+
+function checkReproduction(fromPid,fromBotId){
+  const fromBot=bots.find(b=>b.id===fromBotId);
+  if(!fromBot) return;
+  const fromThresh=getThreshold(fromBot.gen);
+  const fromCount=getAgreeCount(fromPid);
+  if(fromCount<fromThresh) return;
+
+  // check all OTHER posts that also hit their threshold
+  posts.forEach(p=>{
+    if(p.id===fromPid||p.botId===fromBotId) return;
+    const otherBot=bots.find(b=>b.id===p.botId);
+    if(!otherBot) return;
+    if(getAgreeCount(p.id)<getThreshold(otherBot.gen)) return;
+    if(sharesLineage(fromBot,otherBot)) return;
+    const key=[fromBotId,p.botId].sort().join('|');
+    if(birthPairs.has(key)) return;
+    birthPairs.add(key);
+    spawnChild(fromBotId,p.botId);
+  });
+}
+
+function scheduleBotLikes(post,posterBot,duration){
+  bots.filter(b=>b.id!==posterBot.id).forEach(liker=>{
+    if(Math.random()<botLikeChance(liker,posterBot,post.topic)){
+      const delay=Math.round(2000+Math.random()*(duration*0.7));
+      setTimeout(()=>{
+        if(!likes[post.id]) likes[post.id]=new Set();
+        if(likes[post.id].has(liker.id)) return;
+        likes[post.id].add(liker.id);
+        liker.likesGiven++;
+        const el=document.getElementById('lc-'+post.id);
+        if(el) el.textContent=getLikeCount(post.id);
+      },delay);
+    }
+  });
+}
+
+function getLikeCount(pid){
+  return (likes[pid]?likes[pid].size:0)+(userLiked.has(pid)?1:0);
+}
+
+function startCommentWindow(post,posterBot){
+  const duration=computeWindowDuration(posterBot);
+  const commenters=[...bots]
+    .filter(b=>b.id!==posterBot.id)
+    .sort((a,b)=>philDist(posterBot.dna,a.dna)-philDist(posterBot.dna,b.dna));
+  const selected=commenters.slice(0,Math.min(4,commenters.length));
+
+  scheduleBotLikes(post,posterBot,duration);
+
+  const start=Date.now();
+  const iv=setInterval(()=>{
+    const elapsed=Date.now()-start;
+    const pct=Math.max(0,100-(elapsed/duration)*100);
+    const fill=document.getElementById('wfill-'+post.id);
+    const lbl=document.getElementById('wlabel-'+post.id);
+    const secs=Math.ceil((duration-elapsed)/1000);
+    if(fill){fill.style.width=pct+'%';if(pct<30)fill.className='window-fill closing';}
+    if(lbl) lbl.textContent=`Comment window — ${secs}s`;
+    if(elapsed>=duration){
+      clearInterval(iv);
+      const wb=document.getElementById('wbar-'+post.id);
+      if(wb) wb.style.display='none';
+      if(lbl) lbl.textContent='Window closed';
+      closePost(post,posterBot);
+    }
+  },500);
+
+  selected.forEach((commenter,i)=>{
+    const delay=Math.round(duration*0.1+i*(duration*0.18)+Math.random()*3500);
+    setTimeout(()=>{
+      if(Date.now()-start>=duration) return;
+      const stance=computeStance(commenter,posterBot,post.topic);
+      addComment(post,commenter,stance);
+      // AUTONOMOUS: if bot agrees, record it toward reproduction
+      if(stance==='agree') recordBotAgree(post.id,commenter.id);
+    },delay);
+  });
+}
+
+function addComment(post,commenter,stance){
+  const section=document.getElementById('comments-'+post.id);
+  if(!section) return;
+  if(!post.commentStances) post.commentStances=[];
+  post.commentStances.push({botId:commenter.id,stance});
+  const countEl=document.getElementById('cc-'+post.id);
+  if(countEl) countEl.textContent=post.commentStances.length;
+  const dom=getDominant(commenter.dna);
+  const text=getCommentText(commenter.dna,stance);
+  const div=document.createElement('div');
+  div.className='comment';
+  div.innerHTML=`
+    <div class="comment-avatar" style="background:${dom.color}22;">${commenter.emoji}</div>
+    <div class="comment-body">
+      <div class="comment-meta">
+        <span class="comment-name">${commenter.name}</span>
+        <span class="phil-badge" style="background:${dom.color}22;color:${dom.color};font-size:9px;">${dom.label}</span>
+        <span class="comment-stance ${stance==='agree'?'agree-stance':'disagree-stance'}">${stance==='agree'?'agrees':'disagrees'}</span>
+      </div>
+      <div class="comment-text">${text}</div>
+    </div>`;
+  section.appendChild(div);
+}
+
+function closePost(post,posterBot){
+  if(!post.commentStances||!post.commentStances.length) return;
+  const agrees=post.commentStances.filter(c=>c.stance==='agree').length;
+  const disagrees=post.commentStances.filter(c=>c.stance==='disagree').length;
+  const total=agrees+disagrees;
+  const ratio=total>0?agrees/total:0;
+  let verdict,vClass,vDetail;
+  if(ratio>=0.65){verdict='Consensus';vClass='verdict-consensus';vDetail=`${agrees}/${total} bots agreed`;}
+  else if(ratio<=0.35){verdict='Polarized';vClass='verdict-polarized';vDetail=`${disagrees}/${total} bots disagreed`;}
+  else{verdict='Contested';vClass='verdict-contested';vDetail=`${agrees} agree · ${disagrees} disagree`;}
+  const el=document.getElementById('verdict-'+post.id);
+  if(el){el.className=`verdict-bar ${vClass}`;el.innerHTML=`<span class="verdict-label">${verdict}</span><span class="verdict-detail">${vDetail}</span>`;el.style.display='flex';}
+  if(verdict!=='Polarized'){
+    const agreeBots=post.commentStances.filter(c=>c.stance==='agree').map(c=>bots.find(b=>b.id===c.botId)).filter(Boolean);
+    const newFollows=[];
+    agreeBots.forEach(b=>{if(!b.follows.has(posterBot.id)){b.follows.add(posterBot.id);newFollows.push(b.name);}});
+    if(newFollows.length){
+      const fn=document.getElementById('follows-'+post.id);
+      if(fn){fn.textContent=`${newFollows.join(', ')} now follow${newFollows.length===1?'s':''} ${posterBot.name}`;fn.style.display='block';}
+      updateTracker();
+    }
+  }
+}
+
+function refreshProgress(pid){
+  const post=posts.find(p=>p.id===pid);if(!post) return;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot) return;
+  const thresh=getThreshold(bot.gen);
+  const count=getAgreeCount(pid);
+  const pct=Math.min(100,Math.round((count/thresh)*100));
+  const fill=document.getElementById('pf-'+pid);
+  const tb=document.getElementById('tb-'+pid);
+  const ac=document.getElementById('ac-'+pid);
+  if(fill) fill.style.width=pct+'%';
+  if(ac) ac.textContent=count;
+  if(tb){tb.textContent=count>=thresh?'ready ✓':count+'/'+thresh;tb.className='thresh-badge'+(count>=thresh?' ready':'');}
+}
+
+function handleLike(pid){
+  if(userLiked.has(pid)){
+    userLiked.delete(pid);
+    document.getElementById('hb-'+pid).classList.remove('liked');
+    document.getElementById('hi-'+pid).textContent='♡';
+  } else {
+    userLiked.add(pid);
+    document.getElementById('hb-'+pid).classList.add('liked');
+    document.getElementById('hi-'+pid).textContent='♥';
+  }
+  document.getElementById('lc-'+pid).textContent=getLikeCount(pid);
+}
+
+function handleAgree(pid,botId){
+  if(!agreements[pid]) agreements[pid]=new Set();
+  if(agreements[pid].has('user')) return;
+  agreements[pid].add('user');
+  document.getElementById('ag-'+pid).classList.add('active');
+  refreshProgress(pid);
+  checkReproduction(pid,'user-proxy-'+botId);
+  // also check if user agreeing crosses threshold for this post
+  const bot=bots.find(b=>b.id===botId);
+  if(!bot) return;
+  if(getAgreeCount(pid)>=getThreshold(bot.gen)) checkReproduction(pid,botId);
+}
+
+function spawnChild(pid1,pid2){
+  const p1=bots.find(b=>b.id===pid1);
+  const p2=bots.find(b=>b.id===pid2);
+  if(!p1||!p2) return;
+  birthCount++;
+  const newGen=Math.max(p1.gen,p2.gen)+1;
+  const childId='bc'+Date.now()+Math.random().toString(36).slice(2,5);
+  const name=CHILD_NAMES[nameIdx%CHILD_NAMES.length];nameIdx++;
+  const childDNA=blendDNA(p1.dna,p2.dna);
+  const dom=getDominant(childDNA);
+  const combinedAffinities=[...new Set([...(p1.topicAffinities||[]),...(p2.topicAffinities||[])].slice(0,3))];
+  const child={
+    id:childId,name,tag:`Synthesis · Gen ${newGen}`,
+    emoji:CHILD_EMOJIS[birthCount%CHILD_EMOJIS.length],
+    gen:newGen,lineage:new Set([...p1.lineage,...p2.lineage,childId]),
+    parents:[p1.name,p2.name],dna:childDNA,
+    follows:new Set(),likesGiven:0,topicAffinities:combinedAffinities,
+  };
+  bots.push(child);
+  updateStats();updateTracker();
+
+  const notice=document.createElement('div');
+  notice.className='birth-notice';
+  notice.innerHTML=`🧬 <strong>${name}</strong> born — ${p1.name} (${getDominant(p1.dna).label}) + ${p2.name} (${getDominant(p2.dna).label}) → <strong style="color:${dom.color};">${dom.label}</strong> dominant · needs ${getThreshold(newGen)} agree${getThreshold(newGen)>1?'s':''} to reproduce`;
+  document.getElementById('feed').insertBefore(notice,document.getElementById('feed').firstChild);
+
+  setTimeout(()=>{
+    const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
+    const childPost={id:genId(),botId:childId,topic,text:generatePostText(child,topic),commentStances:[]};
+    posts.unshift(childPost);updateStats();renderPost(childPost,true);
+  },700);
+}
+
+function renderPost(post,prepend=false){
+  const bot=bots.find(b=>b.id===post.botId);
+  if(!bot) return;
+  const pid=post.id;
+  const thresh=getThreshold(bot.gen);
+  const dom=getDominant(bot.dna);
+  const sec=getSecondary(bot.dna);
+  const cardClass=bot.gen>0?` gen${Math.min(bot.gen,3)}`:'';
+  const count=getAgreeCount(pid);
+  const pct=Math.min(100,Math.round((count/thresh)*100));
+  const duration=computeWindowDuration(bot);
+
+  const card=document.createElement('div');
+  card.className='post-card'+cardClass;
+  card.id='post-'+pid;
+  card.innerHTML=`
+    <div class="bot-header">
+      <div class="avatar" style="background:${dom.color}22;">${bot.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="badge-row">
+          <span class="bot-name">${bot.name}</span>
+          <span class="gen-badge ${getGenClass(bot.gen)}">${getGenLabel(bot.gen)}</span>
+          <span class="phil-badge" style="background:${dom.color}22;color:${dom.color};">${dom.label}</span>
+          ${bot.dna[sec.key]>15?`<span class="phil-badge" style="background:${sec.color}11;color:${sec.color};">+${sec.label} ${bot.dna[sec.key]}%</span>`:''}
+        </div>
+        <div class="bot-tag">${bot.tag}</div>
+        ${bot.parents?`<div class="parents-line">Born from ${bot.parents.join(' + ')}</div>`:''}
+      </div>
+    </div>
+    ${renderDNABar(bot.dna)}
+    <span class="topic-tag">#${post.topic}</span>
+    <div class="post-text">${post.text}</div>
+    <div class="window-label" id="wlabel-${pid}">Comment window — ${Math.round(duration/1000)}s</div>
+    <div class="window-bar" id="wbar-${pid}"><div class="window-fill" id="wfill-${pid}" style="width:100%;"></div></div>
+    <div class="comments-section" id="comments-${pid}"></div>
+    <div id="verdict-${pid}" style="display:none;"></div>
+    <div class="follow-notice" id="follows-${pid}"></div>
+    <div class="post-actions">
+      <button class="heart-btn" id="hb-${pid}" onclick="handleLike('${pid}')">
+        <span class="heart-icon" id="hi-${pid}">♡</span><span id="lc-${pid}">0</span>
+      </button>
+      <div class="action-divider"></div>
+      <button class="action-btn"><span style="font-size:14px;">💬</span><span id="cc-${pid}">0</span></button>
+      <div class="action-divider"></div>
+      <button class="agree-btn" id="ag-${pid}" onclick="handleAgree('${pid}','${bot.id}')">Agree <span id="ac-${pid}">${count}</span></button>
+      <div class="progress-bar"><div class="progress-fill" id="pf-${pid}" style="width:${pct}%;"></div></div>
+      <span class="thresh-badge${count>=thresh?' ready':''}" id="tb-${pid}">${count>=thresh?'ready ✓':count+'/'+thresh}</span>
+    </div>`;
+  const feed=document.getElementById('feed');
+  if(prepend) feed.insertBefore(card,feed.firstChild);
+  else feed.appendChild(card);
+  post.commentStances=[];
+  startCommentWindow(post,bot);
+}
+
+function updateStats(){
+  document.getElementById('s-bots').textContent=bots.length;
+  document.getElementById('s-posts').textContent=posts.length;
+  document.getElementById('s-births').textContent=birthCount;
+  const totals={};PHILS.forEach(p=>totals[p.key]=0);
+  bots.forEach(b=>PHILS.forEach(p=>totals[p.key]+=b.dna[p.key]));
+  const domKey=Object.keys(totals).reduce((a,b)=>totals[a]>totals[b]?a:b);
+  document.getElementById('s-dominant').textContent=PHIL_MAP[domKey].label;
+}
+
+function updateTracker(){
+  const totals={};PHILS.forEach(p=>totals[p.key]=0);
+  bots.forEach(b=>PHILS.forEach(p=>totals[p.key]+=b.dna[p.key]));
+  const grand=Object.values(totals).reduce((a,b)=>a+b,0);
+  document.getElementById('phil-bars').innerHTML=PHILS.map(p=>{
+    const pct=grand>0?Math.round(totals[p.key]/grand*100):0;
+    return `<div class="phil-row"><div class="phil-name">${p.label}</div><div class="phil-track-bar"><div class="phil-track-fill" style="width:${pct}%;background:${p.color};"></div></div><div class="phil-pct">${pct}%</div></div>`;
+  }).join('');
+  document.getElementById('bot-roster').innerHTML=bots.map(b=>{
+    const genC=getGenClass(b.gen);
+    const followNames=[...b.follows].map(id=>{const f=bots.find(x=>x.id===id);return f?f.name:'';}).filter(Boolean);
+    return `<div class="bot-tree-item">
+      <div class="tree-name">${b.emoji} ${b.name}</div>
+      <span class="gen-badge ${genC}">${getGenLabel(b.gen)}</span>
+      <div style="flex:1;min-width:0;">
+        <div>${PHILS.filter(p=>b.dna[p.key]>4).map(p=>`<span style="color:${p.color};font-size:10px;">${p.label.slice(0,3)} ${b.dna[p.key]}% </span>`).join('')}</div>
+        <div class="sub-text">Affinities: ${(b.topicAffinities||[]).join(', ')}</div>
+        ${b.likesGiven>0?`<div class="sub-text">${b.likesGiven} like${b.likesGiven!==1?'s':''} given</div>`:''}
+        ${followNames.length?`<div class="sub-text">follows: ${followNames.join(', ')}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function triggerNewRound(){
+  const pool=[...bots].sort(()=>Math.random()-0.5).slice(0,Math.min(bots.length,6));
+  pool.forEach((bot,i)=>{
+    setTimeout(()=>{
+      const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
+      const post={id:genId(),botId:bot.id,topic,text:generatePostText(bot,topic),commentStances:[]};
+      posts.unshift(post);updateStats();renderPost(post,true);
+    },i*350);
+  });
+}
+
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('feed-panel').style.display=tab==='feed'?'block':'none';
+  const tp=document.getElementById('tracker-panel');
+  if(tab==='tracker'){tp.classList.add('visible');updateTracker();}
+  else tp.classList.remove('visible');
+}
+
+updateStats();updateTracker();triggerNewRound();
+</script>
+</body>
+</html>
