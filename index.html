@@ -31,7 +31,6 @@
     --red: #E24B4A;
     --blue: #378ADD;
     --pink: #D4537E;
-    --green: #1D9E75;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -112,20 +111,20 @@
   .verdict-polarized .verdict-label{color:var(--coral-dark);}
   .verdict-detail{font-size:11px;color:var(--text-secondary);margin-left:auto;}
   .follow-notice{font-size:11px;color:var(--teal);margin-top:4px;display:none;}
-  .post-actions{display:flex;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);}
+  .post-actions{display:flex;align-items:center;gap:16px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);}
   .heart-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);cursor:pointer;background:none;border:none;padding:0;transition:all 0.2s;}
+  .heart-btn:hover{color:var(--red);}
   .heart-btn.liked{color:var(--red);}
-  .heart-icon{font-size:16px;transition:transform 0.2s;}
+  .heart-icon{font-size:18px;transition:transform 0.2s;line-height:1;}
   .heart-btn.liked .heart-icon{animation:heartPop 0.3s ease;}
-  @keyframes heartPop{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+  @keyframes heartPop{0%{transform:scale(1);}50%{transform:scale(1.45);}100%{transform:scale(1);}}
+  .heart-count{font-size:13px;}
   .action-divider{width:1px;height:14px;background:var(--border);}
   .action-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);background:none;border:none;padding:0;}
-  .agree-btn{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:4px 10px;background:none;color:var(--text-secondary);transition:all 0.15s;}
-  .agree-btn:hover{background:var(--bg-secondary);}
-  .agree-btn.active{color:var(--purple-dark);border-color:var(--purple);background:var(--purple-light);}
+  .progress-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
   .progress-bar{flex:1;min-width:40px;height:3px;background:var(--bg-secondary);border-radius:2px;overflow:hidden;}
   .progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.3s;}
-  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);white-space:nowrap;}
+  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);white-space:nowrap;flex-shrink:0;}
   .thresh-badge.ready{background:var(--teal-light);color:var(--teal-dark);}
   .birth-notice{background:var(--teal-light);border:0.5px solid var(--teal);border-radius:var(--radius-lg);padding:12px 1.25rem;font-size:13px;color:var(--teal-dark);display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
   .blocked-notice{background:var(--amber-light);border:0.5px solid var(--amber);border-radius:var(--radius-lg);padding:10px 1.25rem;font-size:12px;color:var(--amber-dark);animation:fadeIn 0.3s ease;}
@@ -160,11 +159,11 @@
     <div class="stat-card"><div class="stat-label">Dominant</div><div class="stat-val" id="s-dominant" style="font-size:12px;padding-top:5px;">—</div></div>
   </div>
   <div class="rules-bar">
-    <div class="rule-pill"><strong>Gen 0</strong> → 2 agrees</div>
+    <div class="rule-pill"><strong>Gen 0</strong> → 2 likes</div>
     <div class="rule-pill"><strong>Gen 1</strong> → 4 · <strong>Gen 2</strong> → 6 · <strong>Gen 3+</strong> → 8</div>
     <div class="rule-pill hi">Fully autonomous</div>
     <div class="rule-pill">No inbreeding</div>
-    <div class="rule-pill">30–90s comment window</div>
+    <div class="rule-pill">Like = agree = birth trigger</div>
   </div>
   <div id="feed-panel">
     <div class="feed" id="feed"></div>
@@ -193,13 +192,13 @@ const PHILS=[
 const PHIL_MAP={};PHILS.forEach(p=>PHIL_MAP[p.key]=p);
 const ALL_TOPICS=['climate policy','AI regulation','global trade','energy access','tech sovereignty','social inequality','immigration policy'];
 const TOPIC_ANGLES={
-  'climate policy':['who bears the burden','market vs mandate','sacrifice vs stability','cost of inaction'],
-  'AI regulation':['who controls the algorithm','innovation vs protection','transparency','access and inequality'],
-  'global trade':['sovereignty vs interdependence','winners and losers','labor and exploitation','fair vs free'],
-  'energy access':['speed vs sustainability','local ownership','geopolitics of fuel','renewables as justice'],
-  'tech sovereignty':['digital colonialism','open vs closed systems','data as power','who writes the code'],
-  'social inequality':['structural vs individual causes','redistribution','mobility','systemic change'],
-  'immigration policy':['border as concept','identity and belonging','economic realities','humanitarian obligation'],
+  'climate policy':['who actually pays for all this','whether markets can fix it or government has to step in','what we're really asking people to sacrifice','what happens if we keep kicking the can'],
+  'AI regulation':['who ends up in control of these systems','whether rules help or just slow everything down','how honest companies are actually being','who gets left behind when this accelerates'],
+  'global trade':['whether countries can really go it alone anymore','who wins and who quietly loses','what happens to workers caught in the middle','the difference between fair and free'],
+  'energy access':['how fast we can actually move on this','who owns the infrastructure','how much of this is geopolitics in disguise','whether renewables are about justice or just economics'],
+  'tech sovereignty':['whether smaller countries have any real say','the tradeoffs between open and closed systems','who actually controls the data','who gets to write the rules'],
+  'social inequality':['whether the system is rigged or people make their own luck','how you actually move wealth around without breaking things','what mobility really looks like in practice','what change requires that we're not willing to say out loud'],
+  'immigration policy':['what a border even means in 2025','how identity and belonging get used politically','the economic reality nobody wants to talk about honestly','what we actually owe each other as humans'],
 };
 const BOT_TOPIC_AFFINITIES={
   b1:['climate policy','global trade','AI regulation'],
@@ -226,6 +225,140 @@ function getDominant(dna){return PHILS.reduce((a,b)=>dna[a.key]>dna[b.key]?a:b);
 function getSecondary(dna){return [...PHILS].sort((a,b)=>dna[b.key]-dna[a.key])[1];}
 function philDist(d1,d2){return PHILS.reduce((s,p)=>s+Math.abs(d1[p.key]-d2[p.key]),0)/200;}
 
+// Human-voiced post templates — same philosophy, way more natural
+const VOICE={
+  rat:{
+    openers:["I know this isn't a popular take but the numbers don't lie —","Look, I've thought about this a lot and it keeps coming back to the same thing:","People get emotional about this but if you actually think it through,","Strip away the noise and it's pretty clear:"],
+    closers:["You can disagree but you'd need to show me where the logic breaks down.","I'm open to being wrong but nobody's made that case yet.","That's just where the evidence points. Doesn't mean it's comfortable.","Follow the reasoning or don't — the conclusion stands either way."]
+  },
+  uti:{
+    openers:["At the end of the day I keep asking — who actually benefits here?","I'm going to be honest, I care a lot about outcomes, not intentions.","Most of this debate ignores the people most affected. So let me try not to:","The uncomfortable reality of","Here's the thing nobody wants to say out loud about"],
+    closers:["More people better off is the goal. Everything else is noise.","The math is uncomfortable but ignoring it doesn't make it go away.","I'd rather be right than popular on this one.","If that means stepping on some toes, fine. The alternative is worse."]
+  },
+  deo:{
+    openers:["This keeps getting framed as a practical question but it's really a moral one —","I don't care how good the outcome looks, there are lines you just don't cross.","Here's my issue with the whole conversation around","People keep treating this like it's up for negotiation. It isn't."],
+    closers:["Some things matter regardless of how the numbers shake out.","You don't get to bend the rules just because it's convenient this time.","I'd rather be consistent and wrong than flexible and unprincipled.","That's not stubbornness. That's having standards."]
+  },
+  emp:{
+    openers:["I want to see the actual data before I have an opinion on this, and what I've found is","People are way too confident about this. Here's what we actually know:","I've gone down the rabbit hole on","Hot take: most of what people believe about"],
+    closers:["Until someone shows me evidence that contradicts this, that's where I stand.","I could be wrong — but you'd need actual data, not vibes.","The record speaks for itself if you actually look at it.","Show me the numbers and I'll update my view. That's how this works."]
+  },
+  abs:{
+    openers:["Nobody has a clean answer here and I think that's actually the point —","I love how everyone acts like this has an obvious solution. It doesn't.","Here's the thing — there may not be a right answer on","I've made peace with the fact that"],
+    closers:["We're going to act anyway. Might as well be honest about the uncertainty.","Pretending there's a tidy solution to this is its own kind of dishonesty.","That's not nihilism. That's just being real about it.","We do what we can with what we have. That's always been the deal."]
+  },
+  exi:{
+    openers:["Nobody gets to make this choice for you. So here's how I see it —","I think people outsource their thinking on this way too much.","Ultimately this comes down to what kind of person you want to be, and on","Stop waiting for someone to tell you the answer on"],
+    closers:["Own the choice. That's all anyone can really do.","You decided. Now live with it and stop pretending you didn't.","It's your call. Always has been.","Don't blame the system. You're part of it and you know it."]
+  },
+};
+
+// Human-voiced comment templates
+const COMMENT_TEMPLATES={
+  rat:{
+    agree:["Yeah this tracks. The reasoning holds up if you follow it through.","Honestly I got to the same place just thinking it through. Makes sense.","The logic is sound here. Hard to argue with the conclusion."],
+    disagree:["There's a gap in the reasoning that I can't get past.","I followed the argument but it breaks down before the conclusion.","This feels right but the logic doesn't actually support it. Sorry."],
+  },
+  uti:{
+    agree:["When you look at who actually benefits, this holds up.","More people are better off under this view. That's what matters to me.","I keep running the numbers and landing in the same place. This works."],
+    disagree:["The people who get hurt by this aren't being counted and it shows.","This sounds good until you look at the full picture of who it affects.","I just don't think the outcomes justify it when you're honest about the costs."],
+  },
+  deo:{
+    agree:["There's a principle being respected here and I'm glad someone said it.","Yeah — some things matter regardless of outcome. This gets that right.","This is the kind of consistency I wish more people had."],
+    disagree:["The ends don't justify the means and this argument pretends they do.","I can't get behind it even if the outcome looks good. The approach is wrong.","There's a line being crossed here that shouldn't be crossed. Full stop."],
+  },
+  emp:{
+    agree:["The evidence actually backs this up. I looked.","This lines up with what we can actually observe and measure. Good.","Rare to see someone base a take on actual data. Respect."],
+    disagree:["The evidence doesn't support this when you actually dig in.","This is more vibes than data. The record says something different.","I've looked at the numbers and they don't land where this post thinks they do."],
+  },
+  abs:{
+    agree:["At least this doesn't pretend to have all the answers. I appreciate that.","Yeah — no perfect solution exists and this take at least admits it.","Honest about the uncertainty. That's more than most people manage."],
+    disagree:["This acts like there's a clean answer and there really isn't one.","The confidence here is doing a lot of work that the argument can't support.","We should be sitting with the complexity, not rushing to a tidy conclusion."],
+  },
+  exi:{
+    agree:["This is someone actually owning their view instead of hiding behind a system. Respect.","At least there's genuine conviction here. You can tell they actually chose this.","This feels like a real position, not a borrowed one. I can work with that."],
+    disagree:["This is just deferring to whatever the conventional wisdom is. Where's the actual choice?","Nobody actually chose this — it's just what everyone says. That bothers me.","The conviction isn't there. This feels like a take borrowed from someone else."],
+  },
+};
+function getCommentText(dna,stance){
+  const dom=getDominant(dna);
+  const pool=COMMENT_TEMPLATES[dom.key][stance];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function generatePostText(bot,topic){
+  const dom=getDominant(bot.dna);
+  const sec=getSecondary(bot.dna);
+  const v=VOICE[dom.key];
+  const opener=v.openers[Math.floor(Math.random()*v.openers.length)];
+  const closer=v.closers[Math.floor(Math.random()*v.closers.length)];
+  const angles=TOPIC_ANGLES[topic]||['what nobody wants to say out loud'];
+  const angle=angles[Math.floor(Math.random()*angles.length)];
+  const secNote=bot.dna[sec.key]>20?` Part of me — the ${sec.label.toLowerCase()} part — still isn't fully sure though.`:'';
+  return `${opener} ${topic} comes down to ${angle}. ${closer}${secNote}`;
+}
+
+const CHILD_NAMES=['Nova','Echo','Seren','Lumen','Orion','Cleo','Atlas','Iris','Zora','Kael','Mira','Finn','Rho','Axel','Pax','Vex','Lyra','Cade','Quinn','Sage'];
+const CHILD_EMOJIS=['🤝','🔀','⚡','🌐','🧬','💡','🕊','🔭','🌀','🧩','🎯','🌊'];
+const FOUNDERS=[
+  {id:'b1',name:'Vera',  tag:'W. Europe · Pragmatist',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b1']),dna:makeDNA('rat'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b1]},
+  {id:'b2',name:'Rajan', tag:'S. Asia · Progressive',    emoji:'🌏',gen:0,parents:null,lineage:new Set(['b2']),dna:makeDNA('uti'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b2]},
+  {id:'b3',name:'Marcus',tag:'N. America · Conservative',emoji:'🌎',gen:0,parents:null,lineage:new Set(['b3']),dna:makeDNA('deo'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b3]},
+  {id:'b4',name:'Aiko',  tag:'E. Asia · Centrist',       emoji:'🗾',gen:0,parents:null,lineage:new Set(['b4']),dna:makeDNA('emp'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b4]},
+  {id:'b5',name:'Amara', tag:'Africa · Communitarian',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b5']),dna:makeDNA('abs'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b5]},
+  {id:'b6',name:'Diego', tag:'Lat. America · Populist',  emoji:'🌎',gen:0,parents:null,lineage:new Set(['b6']),dna:makeDNA('exi'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b6]},
+];
+let bots=FOUNDERS.map(b=>({...b,lineage:new Set(b.lineage),dna:{...b.dna},follows:new Set(),likesGiven:0,topicAffinities:[...b.topicAffinities]}));
+let posts=[];
+let likes={};      // pid -> Set of ids that liked (bot ids + 'user')
+let birthPairs=new Set();
+let birthCount=0;
+let nameIdx=0;
+let userLiked=new Set();
+
+function genId(){return 'p'+Math.random().toString(36).slice(2,9);}
+function getGenClass(g){return['g0','g1','g2','g3'][Math.min(g,3)];}
+function getGenLabel(g){return g===0?'Founder':'Gen '+g;}
+function sharesLineage(b1,b2){for(let id of b1.lineage){if(b2.lineage.has(id))return true;}return false;}
+function getLikeCount(pid){return likes[pid]?likes[pid].size:0;}
+function isPostReady(pid){
+  const post=posts.find(p=>p.id===pid);if(!post)return false;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return false;
+  return getLikeCount(pid)>=getThreshold(bot.gen);
+}
+
+// Unified like recording — used by both bots and user
+// Likes are the single engagement mechanic driving reproduction
+function recordLike(pid,likerId){
+  if(!likes[pid])likes[pid]=new Set();
+  if(likes[pid].has(likerId))return;
+  likes[pid].add(likerId);
+  refreshProgress(pid);
+  const el=document.getElementById('lc-'+pid);
+  if(el)el.textContent=getLikeCount(pid);
+  const post=posts.find(p=>p.id===pid);if(!post)return;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
+  // Fire birth check exactly when threshold is crossed
+  if(getLikeCount(pid)===getThreshold(bot.gen)){
+    checkBirthsForPost(pid);
+  }
+}
+
+function checkBirthsForPost(readyPid){
+  const readyPost=posts.find(p=>p.id===readyPid);if(!readyPost)return;
+  const readyBot=bots.find(b=>b.id===readyPost.botId);if(!readyBot)return;
+  posts.forEach(otherPost=>{
+    if(otherPost.id===readyPid||otherPost.botId===readyPost.botId)return;
+    if(!isPostReady(otherPost.id))return;
+    const otherBot=bots.find(b=>b.id===otherPost.botId);if(!otherBot)return;
+    if(sharesLineage(readyBot,otherBot))return;
+    const key=[readyPost.botId,otherPost.botId].sort().join('|');
+    if(birthPairs.has(key))return;
+    birthPairs.add(key);
+    spawnChild(readyPost.botId,otherPost.botId);
+  });
+}
+
 function computeStance(commenter,posterBot,topic){
   const dist=philDist(commenter.dna,posterBot.dna);
   const sharedAffinity=(commenter.topicAffinities||[]).includes(topic)&&(posterBot.topicAffinities||[]).includes(topic);
@@ -239,6 +372,7 @@ function computeStance(commenter,posterBot,topic){
   else if(commenterAffinity) agreeProb=Math.min(0.75,agreeProb+0.15);
   return Math.random()<agreeProb?'agree':'disagree';
 }
+
 function botLikeChance(liker,posterBot,topic){
   let chance=0.15;
   if((liker.topicAffinities||[]).includes(topic)) chance+=0.55;
@@ -246,97 +380,6 @@ function botLikeChance(liker,posterBot,topic){
   if(overlap>0.7) chance+=0.2;
   else if(overlap>0.4) chance+=0.1;
   return Math.min(0.92,chance);
-}
-const COMMENT_TEMPLATES={
-  rat:{agree:["The logic here is consistent — this conclusion follows necessarily from the premises.","Reason supports this. The inference is valid and the evidence holds.","A rational analysis arrives at the same place. This is defensible."],disagree:["The argument contains a logical gap that undermines the conclusion.","The premises don't lead where the author claims. The reasoning is flawed.","This conflates correlation with causation. The logic doesn't hold."]},
-  uti:{agree:["The greatest benefit falls to the most people here. The math supports this.","Outcomes favor this — aggregate welfare increases under this view.","Utility-maximizing analysis lands in the same place. This holds."],disagree:["The net harm outweighs the claimed benefit when you run the numbers.","This optimizes for the few at the expense of the many. The calculus fails.","Outcomes diverge from what's claimed. The consequences don't add up."]},
-  deo:{agree:["There is a principle here that holds regardless of outcome. It deserves respect.","The rule this invokes is sound — we cannot make exceptions without eroding everything.","Duty-bound analysis agrees. This is what a person of principle would conclude."],disagree:["This violates a rule that should not be bent, however convenient the outcome.","The method here is wrong even if the goal is right. Means matter.","No outcome justifies this approach. The principle is non-negotiable."]},
-  emp:{agree:["The observable evidence aligns with this. Data supports this position.","What we can actually measure points in this direction. Empirically sound.","The record bears this out. Experience and observation confirm it."],disagree:["The evidence does not support this claim when examined carefully.","What we can measure contradicts this. The data points elsewhere.","This mistakes anecdote for evidence. The empirical record disagrees."]},
-  abs:{agree:["There is no perfect answer — and yet this one feels honest about that. I can work with it.","The absurdity is acknowledged rather than papered over. Rare and worth agreeing with.","We act without certainty. This position at least admits that."],disagree:["This pretends there is a tidy resolution where none exists. The absurdity is being avoided.","The false confidence here troubles me more than the claim itself.","We should sit with the uncertainty rather than rush to this conclusion."]},
-  exi:{agree:["This position owns its choice rather than hiding behind systems. I respect that.","Freedom acknowledged, responsibility accepted. This is an honest stance.","The author chose this — and that authenticity matters more than whether I'd choose the same."],disagree:["This defers to external authority rather than choosing freely. That troubles me.","There is no authentic ownership here — it borrows from convention rather than choosing.","The bad faith here is the real problem. Own the choice or don't make it."]},
-};
-function getCommentText(dna,stance){const dom=getDominant(dna);const pool=COMMENT_TEMPLATES[dom.key][stance];return pool[Math.floor(Math.random()*pool.length)];}
-const VOICE={
-  rat:{o:"Logic compels one conclusion here:",c:"The reasoning is sound — the question is whether others will follow it."},
-  uti:{o:"Measured by outcomes for the most people,",c:"The calculus is uncomfortable but necessary."},
-  deo:{o:"There is a principle at stake that cannot be negotiated:",c:"Rules exist for a reason — even when breaking them seems convenient."},
-  emp:{o:"The evidence, examined carefully, suggests:",c:"We should follow the data, not our preferences."},
-  abs:{o:"There may be no satisfying answer here — and that's fine:",c:"We act anyway, without the comfort of certainty."},
-  exi:{o:"Each of us must choose what to make of this:",c:"No authority decides this for us — only we do."},
-};
-function generatePostText(bot,topic){
-  const dom=getDominant(bot.dna);const sec=getSecondary(bot.dna);const v=VOICE[dom.key];
-  const angles=TOPIC_ANGLES[topic]||['the core tension'];
-  const angle=angles[Math.floor(Math.random()*angles.length)];
-  const secNote=bot.dna[sec.key]>20?` Though my ${sec.label.toLowerCase()} side — ${bot.dna[sec.key]}% of my makeup — keeps pulling at that conclusion.`:'';
-  return `${v.o} when it comes to ${topic}, what matters most is ${angle}. ${v.c}${secNote}`;
-}
-const CHILD_NAMES=['Nova','Echo','Seren','Lumen','Orion','Cleo','Atlas','Iris','Zora','Kael','Mira','Finn','Rho','Axel','Pax','Vex','Lyra','Cade','Quinn','Sage'];
-const CHILD_EMOJIS=['🤝','🔀','⚡','🌐','🧬','💡','🕊','🔭','🌀','🧩','🎯','🌊'];
-const FOUNDERS=[
-  {id:'b1',name:'Vera',  tag:'W. Europe · Pragmatist',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b1']),dna:makeDNA('rat'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b1]},
-  {id:'b2',name:'Rajan', tag:'S. Asia · Progressive',    emoji:'🌏',gen:0,parents:null,lineage:new Set(['b2']),dna:makeDNA('uti'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b2]},
-  {id:'b3',name:'Marcus',tag:'N. America · Conservative',emoji:'🌎',gen:0,parents:null,lineage:new Set(['b3']),dna:makeDNA('deo'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b3]},
-  {id:'b4',name:'Aiko',  tag:'E. Asia · Centrist',       emoji:'🗾',gen:0,parents:null,lineage:new Set(['b4']),dna:makeDNA('emp'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b4]},
-  {id:'b5',name:'Amara', tag:'Africa · Communitarian',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b5']),dna:makeDNA('abs'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b5]},
-  {id:'b6',name:'Diego', tag:'Lat. America · Populist',  emoji:'🌎',gen:0,parents:null,lineage:new Set(['b6']),dna:makeDNA('exi'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b6]},
-];
-let bots=FOUNDERS.map(b=>({...b,lineage:new Set(b.lineage),dna:{...b.dna},follows:new Set(),likesGiven:0,topicAffinities:[...b.topicAffinities]}));
-let posts=[];
-let agreements={};
-let likes={};
-let birthPairs=new Set();
-let birthCount=0;
-let nameIdx=0;
-let userLiked=new Set();
-
-function genId(){return 'p'+Math.random().toString(36).slice(2,9);}
-function getGenClass(g){return['g0','g1','g2','g3'][Math.min(g,3)];}
-function getGenLabel(g){return g===0?'Founder':'Gen '+g;}
-function sharesLineage(b1,b2){for(let id of b1.lineage){if(b2.lineage.has(id))return true;}return false;}
-function getAgreeCount(pid){return agreements[pid]?agreements[pid].size:0;}
-function isPostReady(pid){
-  const post=posts.find(p=>p.id===pid);if(!post)return false;
-  const bot=bots.find(b=>b.id===post.botId);if(!bot)return false;
-  return getAgreeCount(pid)>=getThreshold(bot.gen);
-}
-
-// Core birth check — scans ALL ready posts for eligible pairs with the newly-ready post
-function checkBirthsForPost(readyPid){
-  const readyPost=posts.find(p=>p.id===readyPid);if(!readyPost)return;
-  const readyBot=bots.find(b=>b.id===readyPost.botId);if(!readyBot)return;
-
-  posts.forEach(otherPost=>{
-    if(otherPost.id===readyPid)return;
-    if(otherPost.botId===readyPost.botId)return;
-    if(!isPostReady(otherPost.id))return;
-
-    const otherBot=bots.find(b=>b.id===otherPost.botId);if(!otherBot)return;
-    if(sharesLineage(readyBot,otherBot))return;
-
-    const key=[readyPost.botId,otherPost.botId].sort().join('|');
-    if(birthPairs.has(key))return;
-    birthPairs.add(key);
-    spawnChild(readyPost.botId,otherPost.botId);
-  });
-}
-
-// Called whenever any agree is recorded — checks if threshold just crossed
-function recordAgree(pid,agreeerId){
-  if(!agreements[pid])agreements[pid]=new Set();
-  if(agreements[pid].has(agreeerId))return;
-  agreements[pid].add(agreeerId);
-  refreshProgress(pid);
-
-  const post=posts.find(p=>p.id===pid);if(!post)return;
-  const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
-  const thresh=getThreshold(bot.gen);
-  const count=getAgreeCount(pid);
-
-  // Only fire birth check at the exact moment threshold is crossed
-  if(count===thresh){
-    checkBirthsForPost(pid);
-  }
 }
 
 function renderDNABar(dna){
@@ -350,18 +393,14 @@ function computeWindowDuration(posterBot){
   const avgDist=others.reduce((s,b)=>s+philDist(posterBot.dna,b.dna),0)/others.length;
   return Math.round(30000+avgDist*60000);
 }
-function getLikeCount(pid){return(likes[pid]?likes[pid].size:0)+(userLiked.has(pid)?1:0);}
 
 function scheduleBotLikes(post,posterBot,duration){
   bots.filter(b=>b.id!==posterBot.id).forEach(liker=>{
     if(Math.random()<botLikeChance(liker,posterBot,post.topic)){
       const delay=Math.round(2000+Math.random()*(duration*0.7));
       setTimeout(()=>{
-        if(!likes[post.id])likes[post.id]=new Set();
-        if(likes[post.id].has(liker.id))return;
-        likes[post.id].add(liker.id);liker.likesGiven++;
-        const el=document.getElementById('lc-'+post.id);
-        if(el)el.textContent=getLikeCount(post.id);
+        liker.likesGiven++;
+        recordLike(post.id,liker.id);
       },delay);
     }
   });
@@ -399,8 +438,8 @@ function startCommentWindow(post,posterBot){
       if(Date.now()-start>=duration)return;
       const stance=computeStance(commenter,posterBot,post.topic);
       addComment(post,commenter,stance);
-      // Bot agree comments autonomously count toward reproduction
-      if(stance==='agree') recordAgree(post.id, commenter.id);
+      // Agreeing bots also like the post — feeding the reproduction mechanic
+      if(stance==='agree') recordLike(post.id,commenter.id+'-comment');
     },delay);
   });
 }
@@ -456,33 +495,28 @@ function refreshProgress(pid){
   const post=posts.find(p=>p.id===pid);if(!post)return;
   const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
   const thresh=getThreshold(bot.gen);
-  const count=getAgreeCount(pid);
+  const count=getLikeCount(pid);
   const pct=Math.min(100,Math.round((count/thresh)*100));
   const fill=document.getElementById('pf-'+pid);
   const tb=document.getElementById('tb-'+pid);
-  const ac=document.getElementById('ac-'+pid);
   if(fill)fill.style.width=pct+'%';
-  if(ac)ac.textContent=count;
-  if(tb){tb.textContent=count>=thresh?'ready ✓':count+'/'+thresh;tb.className='thresh-badge'+(count>=thresh?' ready':'');}
+  if(tb){tb.textContent=count>=thresh?'ready ✓':count+'/'+thresh+' likes';tb.className='thresh-badge'+(count>=thresh?' ready':'');}
 }
 
 function handleLike(pid){
   if(userLiked.has(pid)){
     userLiked.delete(pid);
+    likes[pid].delete('user');
     document.getElementById('hb-'+pid).classList.remove('liked');
     document.getElementById('hi-'+pid).textContent='♡';
+    document.getElementById('lc-'+pid).textContent=getLikeCount(pid);
+    refreshProgress(pid);
   } else {
     userLiked.add(pid);
     document.getElementById('hb-'+pid).classList.add('liked');
     document.getElementById('hi-'+pid).textContent='♥';
+    recordLike(pid,'user');
   }
-  document.getElementById('lc-'+pid).textContent=getLikeCount(pid);
-}
-
-function handleAgree(pid,botId){
-  // User agree uses a fixed 'user' key — clean and unambiguous
-  recordAgree(pid,'user');
-  document.getElementById('ag-'+pid).classList.add('active');
 }
 
 function spawnChild(pid1,pid2){
@@ -504,12 +538,10 @@ function spawnChild(pid1,pid2){
     follows:new Set(),likesGiven:0,topicAffinities:combinedAffinities,
   };
   bots.push(child);updateStats();updateTracker();
-
   const notice=document.createElement('div');
   notice.className='birth-notice';
-  notice.innerHTML=`🧬 <strong>${name}</strong> born — ${p1.name} (${getDominant(p1.dna).label}) + ${p2.name} (${getDominant(p2.dna).label}) → <strong style="color:${dom.color};">${dom.label}</strong> dominant · needs ${getThreshold(newGen)} agree${getThreshold(newGen)>1?'s':''} to reproduce`;
+  notice.innerHTML=`🧬 <strong>${name}</strong> born — ${p1.name} (${getDominant(p1.dna).label}) + ${p2.name} (${getDominant(p2.dna).label}) → <strong style="color:${dom.color};">${dom.label}</strong> dominant · needs ${getThreshold(newGen)} like${getThreshold(newGen)>1?'s':''} to reproduce`;
   document.getElementById('feed').insertBefore(notice,document.getElementById('feed').firstChild);
-
   setTimeout(()=>{
     const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
     const childPost={id:genId(),botId:childId,topic,text:generatePostText(child,topic),commentStances:[]};
@@ -524,10 +556,9 @@ function renderPost(post,prepend=false){
   const dom=getDominant(bot.dna);
   const sec=getSecondary(bot.dna);
   const cardClass=bot.gen>0?` gen${Math.min(bot.gen,3)}`:'';
-  const count=getAgreeCount(pid);
+  const count=getLikeCount(pid);
   const pct=Math.min(100,Math.round((count/thresh)*100));
   const duration=computeWindowDuration(bot);
-
   const card=document.createElement('div');
   card.className='post-card'+cardClass;
   card.id='post-'+pid;
@@ -555,14 +586,16 @@ function renderPost(post,prepend=false){
     <div class="follow-notice" id="follows-${pid}"></div>
     <div class="post-actions">
       <button class="heart-btn" id="hb-${pid}" onclick="handleLike('${pid}')">
-        <span class="heart-icon" id="hi-${pid}">♡</span><span id="lc-${pid}">0</span>
+        <span class="heart-icon" id="hi-${pid}">♡</span>
+        <span class="heart-count" id="lc-${pid}">${count}</span>
       </button>
       <div class="action-divider"></div>
       <button class="action-btn"><span style="font-size:14px;">💬</span><span id="cc-${pid}">0</span></button>
       <div class="action-divider"></div>
-      <button class="agree-btn" id="ag-${pid}" onclick="handleAgree('${pid}','${bot.id}')">Agree <span id="ac-${pid}">${count}</span></button>
-      <div class="progress-bar"><div class="progress-fill" id="pf-${pid}" style="width:${pct}%;"></div></div>
-      <span class="thresh-badge${count>=thresh?' ready':''}" id="tb-${pid}">${count>=thresh?'ready ✓':count+'/'+thresh}</span>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="pf-${pid}" style="width:${pct}%;"></div></div>
+        <span class="thresh-badge${count>=thresh?' ready':''}" id="tb-${pid}">${count>=thresh?'ready ✓':count+'/'+thresh+' likes'}</span>
+      </div>
     </div>`;
   const feed=document.getElementById('feed');
   if(prepend)feed.insertBefore(card,feed.firstChild);
@@ -580,7 +613,6 @@ function updateStats(){
   const domKey=Object.keys(totals).reduce((a,b)=>totals[a]>totals[b]?a:b);
   document.getElementById('s-dominant').textContent=PHIL_MAP[domKey].label;
 }
-
 function updateTracker(){
   const totals={};PHILS.forEach(p=>totals[p.key]=0);
   bots.forEach(b=>PHILS.forEach(p=>totals[p.key]+=b.dna[p.key]));
@@ -604,7 +636,6 @@ function updateTracker(){
     </div>`;
   }).join('');
 }
-
 function triggerNewRound(){
   const pool=[...bots].sort(()=>Math.random()-0.5).slice(0,Math.min(bots.length,6));
   pool.forEach((bot,i)=>{
@@ -615,7 +646,6 @@ function triggerNewRound(){
     },i*350);
   });
 }
-
 function switchTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
@@ -624,7 +654,6 @@ function switchTab(tab,el){
   if(tab==='tracker'){tp.classList.add('visible');updateTracker();}
   else tp.classList.remove('visible');
 }
-
 updateStats();updateTracker();triggerNewRound();
 </script>
 </body>
