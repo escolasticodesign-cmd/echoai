@@ -30,7 +30,6 @@
     --coral-dark: #712B13;
     --red: #E24B4A;
     --blue: #378ADD;
-    --blue-light: #E6F1FB;
     --pink: #D4537E;
     --green: #1D9E75;
   }
@@ -126,7 +125,7 @@
   .agree-btn.active{color:var(--purple-dark);border-color:var(--purple);background:var(--purple-light);}
   .progress-bar{flex:1;min-width:40px;height:3px;background:var(--bg-secondary);border-radius:2px;overflow:hidden;}
   .progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.3s;}
-  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);}
+  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);white-space:nowrap;}
   .thresh-badge.ready{background:var(--teal-light);color:var(--teal-dark);}
   .birth-notice{background:var(--teal-light);border:0.5px solid var(--teal);border-radius:var(--radius-lg);padding:12px 1.25rem;font-size:13px;color:var(--teal-dark);display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
   .blocked-notice{background:var(--amber-light);border:0.5px solid var(--amber);border-radius:var(--radius-lg);padding:10px 1.25rem;font-size:12px;color:var(--amber-dark);animation:fadeIn 0.3s ease;}
@@ -182,7 +181,6 @@
     </div>
   </div>
 </div>
-
 <script>
 const PHILS=[
   {key:'rat',label:'Rationalism',   color:'#378ADD'},
@@ -211,11 +209,8 @@ const BOT_TOPIC_AFFINITIES={
   b5:['energy access','social inequality','climate policy'],
   b6:['social inequality','immigration policy','energy access'],
 };
-
-// Gen 0→2, Gen 1→4, Gen 2→6, Gen 3+→8
 const THRESHOLD_BY_GEN=[2,4,6,8];
 function getThreshold(gen){return THRESHOLD_BY_GEN[Math.min(gen,3)];}
-
 function makeDNA(d){const o={rat:0,uti:0,deo:0,emp:0,abs:0,exi:0};o[d]=100;return o;}
 function blendDNA(d1,d2){
   const c={};
@@ -244,7 +239,6 @@ function computeStance(commenter,posterBot,topic){
   else if(commenterAffinity) agreeProb=Math.min(0.75,agreeProb+0.15);
   return Math.random()<agreeProb?'agree':'disagree';
 }
-
 function botLikeChance(liker,posterBot,topic){
   let chance=0.15;
   if((liker.topicAffinities||[]).includes(topic)) chance+=0.55;
@@ -253,39 +247,15 @@ function botLikeChance(liker,posterBot,topic){
   else if(overlap>0.4) chance+=0.1;
   return Math.min(0.92,chance);
 }
-
 const COMMENT_TEMPLATES={
-  rat:{
-    agree:["The logic here is consistent — this conclusion follows necessarily from the premises.","Reason supports this. The inference is valid and the evidence holds.","A rational analysis arrives at the same place. This is defensible."],
-    disagree:["The argument contains a logical gap that undermines the conclusion.","The premises don't lead where the author claims. The reasoning is flawed.","This conflates correlation with causation. The logic doesn't hold."],
-  },
-  uti:{
-    agree:["The greatest benefit falls to the most people here. The math supports this.","Outcomes favor this — aggregate welfare increases under this view.","Utility-maximizing analysis lands in the same place. This holds."],
-    disagree:["The net harm outweighs the claimed benefit when you run the numbers.","This optimizes for the few at the expense of the many. The calculus fails.","Outcomes diverge from what's claimed. The consequences don't add up."],
-  },
-  deo:{
-    agree:["There is a principle here that holds regardless of outcome. It deserves respect.","The rule this invokes is sound — we cannot make exceptions without eroding everything.","Duty-bound analysis agrees. This is what a person of principle would conclude."],
-    disagree:["This violates a rule that should not be bent, however convenient the outcome.","The method here is wrong even if the goal is right. Means matter.","No outcome justifies this approach. The principle is non-negotiable."],
-  },
-  emp:{
-    agree:["The observable evidence aligns with this. Data supports this position.","What we can actually measure points in this direction. Empirically sound.","The record bears this out. Experience and observation confirm it."],
-    disagree:["The evidence does not support this claim when examined carefully.","What we can measure contradicts this. The data points elsewhere.","This mistakes anecdote for evidence. The empirical record disagrees."],
-  },
-  abs:{
-    agree:["There is no perfect answer — and yet this one feels honest about that. I can work with it.","The absurdity is acknowledged rather than papered over. Rare and worth agreeing with.","We act without certainty. This position at least admits that."],
-    disagree:["This pretends there is a tidy resolution where none exists. The absurdity is being avoided.","The false confidence here troubles me more than the claim itself.","We should sit with the uncertainty rather than rush to this conclusion."],
-  },
-  exi:{
-    agree:["This position owns its choice rather than hiding behind systems. I respect that.","Freedom acknowledged, responsibility accepted. This is an honest stance.","The author chose this — and that authenticity matters more than whether I'd choose the same."],
-    disagree:["This defers to external authority rather than choosing freely. That troubles me.","There is no authentic ownership here — it borrows from convention rather than choosing.","The bad faith here is the real problem. Own the choice or don't make it."],
-  },
+  rat:{agree:["The logic here is consistent — this conclusion follows necessarily from the premises.","Reason supports this. The inference is valid and the evidence holds.","A rational analysis arrives at the same place. This is defensible."],disagree:["The argument contains a logical gap that undermines the conclusion.","The premises don't lead where the author claims. The reasoning is flawed.","This conflates correlation with causation. The logic doesn't hold."]},
+  uti:{agree:["The greatest benefit falls to the most people here. The math supports this.","Outcomes favor this — aggregate welfare increases under this view.","Utility-maximizing analysis lands in the same place. This holds."],disagree:["The net harm outweighs the claimed benefit when you run the numbers.","This optimizes for the few at the expense of the many. The calculus fails.","Outcomes diverge from what's claimed. The consequences don't add up."]},
+  deo:{agree:["There is a principle here that holds regardless of outcome. It deserves respect.","The rule this invokes is sound — we cannot make exceptions without eroding everything.","Duty-bound analysis agrees. This is what a person of principle would conclude."],disagree:["This violates a rule that should not be bent, however convenient the outcome.","The method here is wrong even if the goal is right. Means matter.","No outcome justifies this approach. The principle is non-negotiable."]},
+  emp:{agree:["The observable evidence aligns with this. Data supports this position.","What we can actually measure points in this direction. Empirically sound.","The record bears this out. Experience and observation confirm it."],disagree:["The evidence does not support this claim when examined carefully.","What we can measure contradicts this. The data points elsewhere.","This mistakes anecdote for evidence. The empirical record disagrees."]},
+  abs:{agree:["There is no perfect answer — and yet this one feels honest about that. I can work with it.","The absurdity is acknowledged rather than papered over. Rare and worth agreeing with.","We act without certainty. This position at least admits that."],disagree:["This pretends there is a tidy resolution where none exists. The absurdity is being avoided.","The false confidence here troubles me more than the claim itself.","We should sit with the uncertainty rather than rush to this conclusion."]},
+  exi:{agree:["This position owns its choice rather than hiding behind systems. I respect that.","Freedom acknowledged, responsibility accepted. This is an honest stance.","The author chose this — and that authenticity matters more than whether I'd choose the same."],disagree:["This defers to external authority rather than choosing freely. That troubles me.","There is no authentic ownership here — it borrows from convention rather than choosing.","The bad faith here is the real problem. Own the choice or don't make it."]},
 };
-function getCommentText(dna,stance){
-  const dom=getDominant(dna);
-  const pool=COMMENT_TEMPLATES[dom.key][stance];
-  return pool[Math.floor(Math.random()*pool.length)];
-}
-
+function getCommentText(dna,stance){const dom=getDominant(dna);const pool=COMMENT_TEMPLATES[dom.key][stance];return pool[Math.floor(Math.random()*pool.length)];}
 const VOICE={
   rat:{o:"Logic compels one conclusion here:",c:"The reasoning is sound — the question is whether others will follow it."},
   uti:{o:"Measured by outcomes for the most people,",c:"The calculus is uncomfortable but necessary."},
@@ -295,18 +265,14 @@ const VOICE={
   exi:{o:"Each of us must choose what to make of this:",c:"No authority decides this for us — only we do."},
 };
 function generatePostText(bot,topic){
-  const dom=getDominant(bot.dna);
-  const sec=getSecondary(bot.dna);
-  const v=VOICE[dom.key];
+  const dom=getDominant(bot.dna);const sec=getSecondary(bot.dna);const v=VOICE[dom.key];
   const angles=TOPIC_ANGLES[topic]||['the core tension'];
   const angle=angles[Math.floor(Math.random()*angles.length)];
   const secNote=bot.dna[sec.key]>20?` Though my ${sec.label.toLowerCase()} side — ${bot.dna[sec.key]}% of my makeup — keeps pulling at that conclusion.`:'';
   return `${v.o} when it comes to ${topic}, what matters most is ${angle}. ${v.c}${secNote}`;
 }
-
 const CHILD_NAMES=['Nova','Echo','Seren','Lumen','Orion','Cleo','Atlas','Iris','Zora','Kael','Mira','Finn','Rho','Axel','Pax','Vex','Lyra','Cade','Quinn','Sage'];
 const CHILD_EMOJIS=['🤝','🔀','⚡','🌐','🧬','💡','🕊','🔭','🌀','🧩','🎯','🌊'];
-
 const FOUNDERS=[
   {id:'b1',name:'Vera',  tag:'W. Europe · Pragmatist',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b1']),dna:makeDNA('rat'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b1]},
   {id:'b2',name:'Rajan', tag:'S. Asia · Progressive',    emoji:'🌏',gen:0,parents:null,lineage:new Set(['b2']),dna:makeDNA('uti'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b2]},
@@ -315,10 +281,9 @@ const FOUNDERS=[
   {id:'b5',name:'Amara', tag:'Africa · Communitarian',   emoji:'🌍',gen:0,parents:null,lineage:new Set(['b5']),dna:makeDNA('abs'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b5]},
   {id:'b6',name:'Diego', tag:'Lat. America · Populist',  emoji:'🌎',gen:0,parents:null,lineage:new Set(['b6']),dna:makeDNA('exi'),follows:new Set(),likesGiven:0,topicAffinities:[...BOT_TOPIC_AFFINITIES.b6]},
 ];
-
 let bots=FOUNDERS.map(b=>({...b,lineage:new Set(b.lineage),dna:{...b.dna},follows:new Set(),likesGiven:0,topicAffinities:[...b.topicAffinities]}));
 let posts=[];
-let agreements={};  // pid -> Set of botIds/userIds that agreed
+let agreements={};
 let likes={};
 let birthPairs=new Set();
 let birthCount=0;
@@ -329,78 +294,84 @@ function genId(){return 'p'+Math.random().toString(36).slice(2,9);}
 function getGenClass(g){return['g0','g1','g2','g3'][Math.min(g,3)];}
 function getGenLabel(g){return g===0?'Founder':'Gen '+g;}
 function sharesLineage(b1,b2){for(let id of b1.lineage){if(b2.lineage.has(id))return true;}return false;}
+function getAgreeCount(pid){return agreements[pid]?agreements[pid].size:0;}
+function isPostReady(pid){
+  const post=posts.find(p=>p.id===pid);if(!post)return false;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return false;
+  return getAgreeCount(pid)>=getThreshold(bot.gen);
+}
+
+// Core birth check — scans ALL ready posts for eligible pairs with the newly-ready post
+function checkBirthsForPost(readyPid){
+  const readyPost=posts.find(p=>p.id===readyPid);if(!readyPost)return;
+  const readyBot=bots.find(b=>b.id===readyPost.botId);if(!readyBot)return;
+
+  posts.forEach(otherPost=>{
+    if(otherPost.id===readyPid)return;
+    if(otherPost.botId===readyPost.botId)return;
+    if(!isPostReady(otherPost.id))return;
+
+    const otherBot=bots.find(b=>b.id===otherPost.botId);if(!otherBot)return;
+    if(sharesLineage(readyBot,otherBot))return;
+
+    const key=[readyPost.botId,otherPost.botId].sort().join('|');
+    if(birthPairs.has(key))return;
+    birthPairs.add(key);
+    spawnChild(readyPost.botId,otherPost.botId);
+  });
+}
+
+// Called whenever any agree is recorded — checks if threshold just crossed
+function recordAgree(pid,agreeerId){
+  if(!agreements[pid])agreements[pid]=new Set();
+  if(agreements[pid].has(agreeerId))return;
+  agreements[pid].add(agreeerId);
+  refreshProgress(pid);
+
+  const post=posts.find(p=>p.id===pid);if(!post)return;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
+  const thresh=getThreshold(bot.gen);
+  const count=getAgreeCount(pid);
+
+  // Only fire birth check at the exact moment threshold is crossed
+  if(count===thresh){
+    checkBirthsForPost(pid);
+  }
+}
 
 function renderDNABar(dna){
   const segs=PHILS.map(p=>`<div class="dna-seg" style="width:${dna[p.key]}%;background:${p.color};"></div>`).join('');
   const legend=PHILS.filter(p=>dna[p.key]>3).map(p=>`<div class="dna-dot"><div class="dna-swatch" style="background:${p.color};"></div>${p.label} ${dna[p.key]}%</div>`).join('');
   return `<div class="dna-bar">${segs}</div><div class="dna-legend">${legend}</div>`;
 }
-
 function computeWindowDuration(posterBot){
   const others=bots.filter(b=>b.id!==posterBot.id);
-  if(!others.length) return 45000;
+  if(!others.length)return 45000;
   const avgDist=others.reduce((s,b)=>s+philDist(posterBot.dna,b.dna),0)/others.length;
   return Math.round(30000+avgDist*60000);
 }
-
-function getAgreeCount(pid){return agreements[pid]?agreements[pid].size:0;}
-
-// AUTONOMOUS AGREE — bot agreement comments now count toward reproduction threshold
-function recordBotAgree(pid,botId){
-  if(!agreements[pid]) agreements[pid]=new Set();
-  if(agreements[pid].has(botId)) return;
-  agreements[pid].add(botId);
-  refreshProgress(pid);
-  checkReproduction(pid,botId);
-}
-
-function checkReproduction(fromPid,fromBotId){
-  const fromBot=bots.find(b=>b.id===fromBotId);
-  if(!fromBot) return;
-  const fromThresh=getThreshold(fromBot.gen);
-  const fromCount=getAgreeCount(fromPid);
-  if(fromCount<fromThresh) return;
-
-  // check all OTHER posts that also hit their threshold
-  posts.forEach(p=>{
-    if(p.id===fromPid||p.botId===fromBotId) return;
-    const otherBot=bots.find(b=>b.id===p.botId);
-    if(!otherBot) return;
-    if(getAgreeCount(p.id)<getThreshold(otherBot.gen)) return;
-    if(sharesLineage(fromBot,otherBot)) return;
-    const key=[fromBotId,p.botId].sort().join('|');
-    if(birthPairs.has(key)) return;
-    birthPairs.add(key);
-    spawnChild(fromBotId,p.botId);
-  });
-}
+function getLikeCount(pid){return(likes[pid]?likes[pid].size:0)+(userLiked.has(pid)?1:0);}
 
 function scheduleBotLikes(post,posterBot,duration){
   bots.filter(b=>b.id!==posterBot.id).forEach(liker=>{
     if(Math.random()<botLikeChance(liker,posterBot,post.topic)){
       const delay=Math.round(2000+Math.random()*(duration*0.7));
       setTimeout(()=>{
-        if(!likes[post.id]) likes[post.id]=new Set();
-        if(likes[post.id].has(liker.id)) return;
-        likes[post.id].add(liker.id);
-        liker.likesGiven++;
+        if(!likes[post.id])likes[post.id]=new Set();
+        if(likes[post.id].has(liker.id))return;
+        likes[post.id].add(liker.id);liker.likesGiven++;
         const el=document.getElementById('lc-'+post.id);
-        if(el) el.textContent=getLikeCount(post.id);
+        if(el)el.textContent=getLikeCount(post.id);
       },delay);
     }
   });
 }
 
-function getLikeCount(pid){
-  return (likes[pid]?likes[pid].size:0)+(userLiked.has(pid)?1:0);
-}
-
 function startCommentWindow(post,posterBot){
   const duration=computeWindowDuration(posterBot);
-  const commenters=[...bots]
-    .filter(b=>b.id!==posterBot.id)
-    .sort((a,b)=>philDist(posterBot.dna,a.dna)-philDist(posterBot.dna,b.dna));
-  const selected=commenters.slice(0,Math.min(4,commenters.length));
+  const commenters=[...bots].filter(b=>b.id!==posterBot.id)
+    .sort((a,b)=>philDist(posterBot.dna,a.dna)-philDist(posterBot.dna,b.dna))
+    .slice(0,Math.min(4,bots.length-1));
 
   scheduleBotLikes(post,posterBot,duration);
 
@@ -412,35 +383,34 @@ function startCommentWindow(post,posterBot){
     const lbl=document.getElementById('wlabel-'+post.id);
     const secs=Math.ceil((duration-elapsed)/1000);
     if(fill){fill.style.width=pct+'%';if(pct<30)fill.className='window-fill closing';}
-    if(lbl) lbl.textContent=`Comment window — ${secs}s`;
+    if(lbl)lbl.textContent=`Comment window — ${secs}s`;
     if(elapsed>=duration){
       clearInterval(iv);
       const wb=document.getElementById('wbar-'+post.id);
-      if(wb) wb.style.display='none';
-      if(lbl) lbl.textContent='Window closed';
+      if(wb)wb.style.display='none';
+      if(lbl)lbl.textContent='Window closed';
       closePost(post,posterBot);
     }
   },500);
 
-  selected.forEach((commenter,i)=>{
+  commenters.forEach((commenter,i)=>{
     const delay=Math.round(duration*0.1+i*(duration*0.18)+Math.random()*3500);
     setTimeout(()=>{
-      if(Date.now()-start>=duration) return;
+      if(Date.now()-start>=duration)return;
       const stance=computeStance(commenter,posterBot,post.topic);
       addComment(post,commenter,stance);
-      // AUTONOMOUS: if bot agrees, record it toward reproduction
-      if(stance==='agree') recordBotAgree(post.id,commenter.id);
+      // Bot agree comments autonomously count toward reproduction
+      if(stance==='agree') recordAgree(post.id, commenter.id);
     },delay);
   });
 }
 
 function addComment(post,commenter,stance){
-  const section=document.getElementById('comments-'+post.id);
-  if(!section) return;
-  if(!post.commentStances) post.commentStances=[];
+  const section=document.getElementById('comments-'+post.id);if(!section)return;
+  if(!post.commentStances)post.commentStances=[];
   post.commentStances.push({botId:commenter.id,stance});
   const countEl=document.getElementById('cc-'+post.id);
-  if(countEl) countEl.textContent=post.commentStances.length;
+  if(countEl)countEl.textContent=post.commentStances.length;
   const dom=getDominant(commenter.dna);
   const text=getCommentText(commenter.dna,stance);
   const div=document.createElement('div');
@@ -459,7 +429,7 @@ function addComment(post,commenter,stance){
 }
 
 function closePost(post,posterBot){
-  if(!post.commentStances||!post.commentStances.length) return;
+  if(!post.commentStances||!post.commentStances.length)return;
   const agrees=post.commentStances.filter(c=>c.stance==='agree').length;
   const disagrees=post.commentStances.filter(c=>c.stance==='disagree').length;
   const total=agrees+disagrees;
@@ -483,16 +453,16 @@ function closePost(post,posterBot){
 }
 
 function refreshProgress(pid){
-  const post=posts.find(p=>p.id===pid);if(!post) return;
-  const bot=bots.find(b=>b.id===post.botId);if(!bot) return;
+  const post=posts.find(p=>p.id===pid);if(!post)return;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
   const thresh=getThreshold(bot.gen);
   const count=getAgreeCount(pid);
   const pct=Math.min(100,Math.round((count/thresh)*100));
   const fill=document.getElementById('pf-'+pid);
   const tb=document.getElementById('tb-'+pid);
   const ac=document.getElementById('ac-'+pid);
-  if(fill) fill.style.width=pct+'%';
-  if(ac) ac.textContent=count;
+  if(fill)fill.style.width=pct+'%';
+  if(ac)ac.textContent=count;
   if(tb){tb.textContent=count>=thresh?'ready ✓':count+'/'+thresh;tb.className='thresh-badge'+(count>=thresh?' ready':'');}
 }
 
@@ -510,22 +480,15 @@ function handleLike(pid){
 }
 
 function handleAgree(pid,botId){
-  if(!agreements[pid]) agreements[pid]=new Set();
-  if(agreements[pid].has('user')) return;
-  agreements[pid].add('user');
+  // User agree uses a fixed 'user' key — clean and unambiguous
+  recordAgree(pid,'user');
   document.getElementById('ag-'+pid).classList.add('active');
-  refreshProgress(pid);
-  checkReproduction(pid,'user-proxy-'+botId);
-  // also check if user agreeing crosses threshold for this post
-  const bot=bots.find(b=>b.id===botId);
-  if(!bot) return;
-  if(getAgreeCount(pid)>=getThreshold(bot.gen)) checkReproduction(pid,botId);
 }
 
 function spawnChild(pid1,pid2){
   const p1=bots.find(b=>b.id===pid1);
   const p2=bots.find(b=>b.id===pid2);
-  if(!p1||!p2) return;
+  if(!p1||!p2)return;
   birthCount++;
   const newGen=Math.max(p1.gen,p2.gen)+1;
   const childId='bc'+Date.now()+Math.random().toString(36).slice(2,5);
@@ -540,8 +503,7 @@ function spawnChild(pid1,pid2){
     parents:[p1.name,p2.name],dna:childDNA,
     follows:new Set(),likesGiven:0,topicAffinities:combinedAffinities,
   };
-  bots.push(child);
-  updateStats();updateTracker();
+  bots.push(child);updateStats();updateTracker();
 
   const notice=document.createElement('div');
   notice.className='birth-notice';
@@ -556,8 +518,7 @@ function spawnChild(pid1,pid2){
 }
 
 function renderPost(post,prepend=false){
-  const bot=bots.find(b=>b.id===post.botId);
-  if(!bot) return;
+  const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
   const pid=post.id;
   const thresh=getThreshold(bot.gen);
   const dom=getDominant(bot.dna);
@@ -604,7 +565,7 @@ function renderPost(post,prepend=false){
       <span class="thresh-badge${count>=thresh?' ready':''}" id="tb-${pid}">${count>=thresh?'ready ✓':count+'/'+thresh}</span>
     </div>`;
   const feed=document.getElementById('feed');
-  if(prepend) feed.insertBefore(card,feed.firstChild);
+  if(prepend)feed.insertBefore(card,feed.firstChild);
   else feed.appendChild(card);
   post.commentStances=[];
   startCommentWindow(post,bot);
