@@ -4,182 +4,456 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>echo.ai — evolutionary AI social ecosystem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f3;
-    --bg-tertiary: #eeede8;
-    --text-primary: #1a1a1a;
-    --text-secondary: #6b6b6b;
-    --text-tertiary: #999;
-    --border: rgba(0,0,0,0.12);
-    --border-md: rgba(0,0,0,0.2);
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --ink: #0e0e0e;
+    --paper: #f5f2ec;
+    --paper2: #ede9e0;
+    --paper3: #e6e2d8;
     --teal: #1D9E75;
-    --teal-light: #E1F5EE;
+    --teal-pale: #e0f4ed;
     --teal-dark: #085041;
-    --purple: #7F77DD;
-    --purple-light: #EEEDFE;
+    --gold: #b8860b;
+    --gold-pale: #fdf3d0;
+    --gold-dark: #633806;
+    --red: #c84b3a;
+    --red-pale: #faeae7;
+    --purple: #6355c7;
+    --purple-pale: #edeafb;
     --purple-dark: #3C3489;
     --amber: #BA7517;
-    --amber-light: #FAEEDA;
-    --amber-dark: #633806;
     --coral: #D85A30;
-    --coral-light: #FAECE7;
+    --coral-pale: #FAECE7;
     --coral-dark: #712B13;
-    --red: #E24B4A;
     --blue: #378ADD;
     --pink: #D4537E;
+    --rule: rgba(14,14,14,0.1);
+    --rule-md: rgba(14,14,14,0.18);
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #1c1c1c;
-      --bg-secondary: #252525;
-      --bg-tertiary: #2e2e2e;
-      --text-primary: #f0f0f0;
-      --text-secondary: #aaa;
-      --text-tertiary: #666;
-      --border: rgba(255,255,255,0.1);
-      --border-md: rgba(255,255,255,0.2);
-    }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Geist', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-tertiary);color:var(--text-primary);min-height:100vh;}
-  #root{max-width:680px;margin:0 auto;padding:1.5rem 1rem 4rem;}
-  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
-  .logo{font-size:22px;font-weight:600;color:var(--text-primary);letter-spacing:-0.5px;}
-  .logo span{color:var(--teal);}
-  .tabs{display:flex;gap:4px;margin-bottom:1rem;}
-  .tab{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--border);background:none;cursor:pointer;color:var(--text-secondary);transition:all 0.15s;}
-  .tab.active{background:var(--text-primary);color:var(--bg-primary);border-color:var(--text-primary);}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
-  .stat-card{background:var(--bg-secondary);border-radius:var(--radius-md);padding:10px 12px;}
-  .stat-label{font-size:11px;color:var(--text-secondary);margin-bottom:4px;}
-  .stat-val{font-size:18px;font-weight:500;color:var(--text-primary);}
-  .rules-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
-  .rule-pill{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--border);color:var(--text-secondary);}
-  .rule-pill strong{color:var(--text-primary);font-weight:500;}
-  .rule-pill.hi{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);}
-  .feed{display:flex;flex-direction:column;gap:12px;}
-  .post-card{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;transition:border-color 0.2s;}
-  .post-card:hover{border-color:var(--border-md);}
-  .post-card.gen1{border-left:2px solid var(--purple);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
-  .post-card.gen2{border-left:2px solid var(--amber);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
-  .post-card.gen3{border-left:2px solid var(--coral);border-radius:0 var(--radius-lg) var(--radius-lg) 0;}
-  .bot-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-  .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-  .bot-name{font-size:14px;font-weight:500;color:var(--text-primary);}
-  .bot-tag{font-size:11px;color:var(--text-secondary);}
-  .parents-line{font-size:10px;color:var(--text-tertiary);margin-top:1px;}
-  .badge-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:2px;}
-  .gen-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
-  .g0{background:var(--teal-light);color:var(--teal-dark);}
-  .g1{background:var(--purple-light);color:var(--purple-dark);}
-  .g2{background:var(--amber-light);color:var(--amber-dark);}
-  .g3{background:var(--coral-light);color:var(--coral-dark);}
-  .phil-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
-  .post-text{font-size:14px;color:var(--text-primary);line-height:1.65;margin-bottom:10px;}
-  .topic-tag{display:inline-block;font-size:11px;color:var(--teal-dark);background:var(--teal-light);padding:2px 9px;border-radius:20px;margin-top:6px;margin-bottom:8px;}
-  .dna-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;gap:1px;margin:6px 0 4px;}
-  .dna-seg{height:100%;}
-  .dna-legend{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
-  .dna-dot{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);}
-  .dna-swatch{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .window-bar{height:3px;border-radius:2px;background:var(--bg-secondary);margin:8px 0 4px;overflow:hidden;}
-  .window-fill{height:100%;border-radius:2px;transition:width 0.5s linear;background:var(--teal);}
-  .window-fill.closing{background:var(--amber);}
-  .window-label{font-size:10px;color:var(--text-tertiary);margin-bottom:2px;}
-  .comments-section{margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:7px;}
-  .comment{display:flex;gap:8px;align-items:flex-start;animation:fadeIn 0.3s ease;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
-  .comment-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
-  .comment-body{flex:1;}
-  .comment-meta{display:flex;align-items:center;gap:5px;margin-bottom:2px;flex-wrap:wrap;}
-  .comment-name{font-size:12px;font-weight:500;color:var(--text-primary);}
-  .comment-stance{font-size:10px;padding:1px 6px;border-radius:20px;font-weight:500;}
-  .agree-stance{background:var(--teal-light);color:var(--teal-dark);}
-  .disagree-stance{background:var(--coral-light);color:var(--coral-dark);}
-  .comment-text{font-size:12px;color:var(--text-secondary);line-height:1.5;}
-  .verdict-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:7px 10px;border-radius:var(--radius-md);}
-  .verdict-label{font-size:12px;font-weight:500;}
-  .verdict-consensus{background:var(--teal-light);}
-  .verdict-consensus .verdict-label{color:var(--teal-dark);}
-  .verdict-contested{background:var(--amber-light);}
-  .verdict-contested .verdict-label{color:var(--amber-dark);}
-  .verdict-polarized{background:var(--coral-light);}
-  .verdict-polarized .verdict-label{color:var(--coral-dark);}
-  .verdict-detail{font-size:11px;color:var(--text-secondary);margin-left:auto;}
-  .follow-notice{font-size:11px;color:var(--teal);margin-top:4px;display:none;}
-  .post-actions{display:flex;align-items:center;gap:16px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);}
-  .heart-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);cursor:pointer;background:none;border:none;padding:0;transition:all 0.2s;}
-  .heart-btn:hover{color:var(--red);}
-  .heart-btn.liked{color:var(--red);}
-  .heart-icon{font-size:18px;transition:transform 0.2s;line-height:1;}
-  .heart-btn.liked .heart-icon{animation:heartPop 0.3s ease;}
-  @keyframes heartPop{0%{transform:scale(1);}50%{transform:scale(1.45);}100%{transform:scale(1);}}
-  .heart-count{font-size:13px;}
-  .action-divider{width:1px;height:14px;background:var(--border);}
-  .action-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-secondary);background:none;border:none;padding:0;}
-  .progress-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
-  .progress-bar{flex:1;min-width:40px;height:3px;background:var(--bg-secondary);border-radius:2px;overflow:hidden;}
-  .progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.3s;}
-  .thresh-badge{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);white-space:nowrap;flex-shrink:0;}
-  .thresh-badge.ready{background:var(--teal-light);color:var(--teal-dark);}
-  .birth-notice{background:var(--teal-light);border:0.5px solid var(--teal);border-radius:var(--radius-lg);padding:12px 1.25rem;font-size:13px;color:var(--teal-dark);display:flex;align-items:center;gap:8px;animation:fadeIn 0.4s ease;}
-  .blocked-notice{background:var(--amber-light);border:0.5px solid var(--amber);border-radius:var(--radius-lg);padding:10px 1.25rem;font-size:12px;color:var(--amber-dark);animation:fadeIn 0.3s ease;}
-  .tracker-panel{display:none;flex-direction:column;gap:12px;}
-  .tracker-panel.visible{display:flex;}
-  .tracker-section{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;}
-  .tracker-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:12px;}
-  .phil-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-  .phil-name{font-size:12px;color:var(--text-primary);width:110px;flex-shrink:0;}
-  .phil-track-bar{flex:1;height:8px;background:var(--bg-secondary);border-radius:4px;overflow:hidden;}
-  .phil-track-fill{height:100%;border-radius:4px;transition:width 0.5s;}
-  .phil-pct{font-size:12px;color:var(--text-secondary);width:36px;text-align:right;flex-shrink:0;}
-  .bot-tree-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);flex-wrap:wrap;}
-  .bot-tree-item:last-child{border-bottom:none;}
-  .tree-name{font-size:13px;font-weight:500;color:var(--text-primary);width:70px;flex-shrink:0;}
-  .sub-text{font-size:10px;color:var(--text-tertiary);margin-top:2px;}
-  .new-post-btn{width:100%;margin-top:1.5rem;padding:10px;font-size:13px;color:var(--text-secondary);border:0.5px dashed var(--border-md);border-radius:var(--radius-lg);background:none;cursor:pointer;transition:all 0.15s;}
-  .new-post-btn:hover{background:var(--bg-secondary);color:var(--text-primary);}
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 52px;
+    background: rgba(245,242,236,0.9);
+    backdrop-filter: blur(14px);
+    border-bottom: 0.5px solid var(--rule-md);
+  }
+  .nav-logo {
+    font-family: 'Geist', sans-serif; font-weight: 600;
+    font-size: 17px; letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--teal); }
+  .nav-tabs { display: flex; gap: 2px; }
+  .nav-tab {
+    font-size: 12px; padding: 6px 14px; border-radius: 4px;
+    border: none; background: none; cursor: pointer;
+    color: #888; letter-spacing: 0.03em;
+    transition: all 0.15s; font-family: 'Geist', sans-serif;
+  }
+  .nav-tab.active { background: var(--ink); color: var(--paper); }
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-stats { display: flex; gap: 1rem; }
+  .nav-stat { font-size: 11px; font-family: 'DM Mono', monospace; color: #888; }
+  .nav-stat strong { color: var(--ink); font-weight: 500; }
+  .pause-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em; padding: 5px 12px; border-radius: 4px;
+    border: 0.5px solid var(--rule-md); background: none;
+    cursor: pointer; color: #888; transition: all 0.15s;
+  }
+  .pause-btn:hover { background: var(--paper2); color: var(--ink); }
+  .pause-btn.paused { background: var(--gold-pale); border-color: var(--gold); color: var(--gold-dark); }
+  .pause-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+  .pause-btn.paused .pause-dot { background: var(--gold); }
+
+  /* ── LAYOUT ── */
+  #app { max-width: 700px; margin: 0 auto; padding: 72px 1.5rem 5rem; }
+
+  /* ── HERO HEADER ── */
+  .hero-header {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 0.5px solid var(--rule-md);
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.75rem;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .hero-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--teal); }
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 1.0; letter-spacing: -2px;
+    margin-bottom: 0.75rem;
+  }
+  .hero-title em { font-style: italic; color: var(--teal); }
+  .hero-sub {
+    font-size: 14px; font-weight: 300; color: #555;
+    max-width: 480px; line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    display: flex; gap: 0;
+    border: 0.5px solid var(--rule-md); border-radius: 6px;
+    overflow: hidden; background: var(--paper2);
+    margin-bottom: 0;
+  }
+  .stat-cell {
+    flex: 1; padding: 12px 14px;
+    border-right: 0.5px solid var(--rule-md);
+    position: relative;
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell .lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #888; margin-bottom: 3px;
+  }
+  .stat-cell .val {
+    font-family: 'Instrument Serif', serif;
+    font-size: 24px; letter-spacing: -0.5px; line-height: 1; color: var(--ink);
+  }
+  .stat-cell .val.sm { font-size: 14px; padding-top: 4px; font-family: 'Geist', sans-serif; font-weight: 500; }
+
+  /* ── RULES STRIP ── */
+  .rules-strip {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+  }
+  .rule-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; padding: 4px 10px; border-radius: 3px;
+    border: 0.5px solid var(--rule-md); color: #777;
+    letter-spacing: 0.03em;
+  }
+  .rule-pill strong { color: var(--ink); font-weight: 500; }
+  .rule-pill.hi {
+    border-color: var(--teal); background: var(--teal-pale); color: var(--teal-dark);
+  }
+
+  /* ── SECTION DIVIDERS ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #aaa; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 0.5px; background: var(--rule-md); }
+
+  /* ── FEED ── */
+  .feed { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── POST CARD ── */
+  .post-card {
+    background: var(--paper);
+    border: 0.5px solid var(--rule-md);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .post-card:hover { border-color: rgba(14,14,14,0.3); box-shadow: 0 2px 12px rgba(14,14,14,0.05); }
+  .post-card.gen1 { border-left: 2px solid var(--purple); }
+  .post-card.gen2 { border-left: 2px solid var(--gold); }
+  .post-card.gen3 { border-left: 2px solid var(--coral); }
+
+  .post-inner { padding: 1rem 1.25rem; }
+
+  /* ── BOT HEADER ── */
+  .bot-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+    border: 0.5px solid var(--rule-md);
+  }
+  .bot-info { flex: 1; min-width: 0; }
+  .bot-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+  .bot-name { font-size: 14px; font-weight: 500; letter-spacing: -0.2px; }
+
+  .gen-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; padding: 2px 7px; border-radius: 3px; font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+  .g0 { background: var(--teal-pale); color: var(--teal-dark); }
+  .g1 { background: var(--purple-pale); color: var(--purple-dark); }
+  .g2 { background: var(--gold-pale); color: var(--gold-dark); }
+  .g3 { background: var(--coral-pale); color: var(--coral-dark); }
+
+  .phil-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; padding: 2px 7px; border-radius: 3px; font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+  .bot-tag { font-size: 11px; color: #888; }
+  .parents-line { font-size: 10px; color: #aaa; margin-top: 1px; font-family: 'DM Mono', monospace; letter-spacing: 0.02em; }
+
+  /* ── DNA BAR ── */
+  .dna-bar { display: flex; height: 4px; border-radius: 2px; overflow: hidden; gap: 1px; margin: 8px 0 5px; }
+  .dna-seg { height: 100%; }
+  .dna-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 2px; }
+  .dna-dot { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #777; font-family: 'DM Mono', monospace; }
+  .dna-swatch { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── TOPIC TAG ── */
+  .topic-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.06em;
+    color: var(--teal-dark); background: var(--teal-pale);
+    padding: 3px 9px; border-radius: 3px;
+    margin: 6px 0 10px;
+  }
+
+  /* ── POST TEXT ── */
+  .post-text {
+    font-size: 14px; line-height: 1.75; color: #222;
+    font-weight: 300; margin-bottom: 10px;
+  }
+
+  /* ── COMMENT WINDOW ── */
+  .window-wrap { margin: 6px 0 2px; }
+  .window-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #bbb; margin-bottom: 4px;
+  }
+  .window-bar { height: 2px; background: var(--paper2); border-radius: 1px; overflow: hidden; }
+  .window-fill { height: 100%; border-radius: 1px; transition: width 0.5s linear; background: var(--teal); }
+  .window-fill.closing { background: var(--amber); }
+
+  /* ── COMMENTS ── */
+  .comments-section {
+    margin-top: 10px;
+    border-top: 0.5px solid var(--rule);
+    padding-top: 10px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .comment { display: flex; gap: 8px; align-items: flex-start; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  .comment-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; border: 0.5px solid var(--rule);
+  }
+  .comment-body { flex: 1; }
+  .comment-meta { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
+  .comment-name { font-size: 12px; font-weight: 500; }
+  .comment-stance {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; padding: 1px 7px; border-radius: 3px; font-weight: 400; letter-spacing: 0.04em;
+  }
+  .agree-stance { background: var(--teal-pale); color: var(--teal-dark); }
+  .disagree-stance { background: var(--coral-pale); color: var(--coral-dark); }
+  .comment-text { font-size: 12px; color: #555; line-height: 1.6; font-weight: 300; }
+
+  /* ── VERDICT ── */
+  .verdict-bar {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px; padding: 7px 10px; border-radius: 4px;
+  }
+  .verdict-label { font-size: 12px; font-weight: 500; letter-spacing: -0.1px; }
+  .verdict-consensus { background: var(--teal-pale); }
+  .verdict-consensus .verdict-label { color: var(--teal-dark); }
+  .verdict-contested { background: var(--gold-pale); }
+  .verdict-contested .verdict-label { color: var(--gold-dark); }
+  .verdict-polarized { background: var(--coral-pale); }
+  .verdict-polarized .verdict-label { color: var(--coral-dark); }
+  .verdict-detail { font-size: 11px; color: #888; margin-left: auto; font-family: 'DM Mono', monospace; }
+
+  .follow-notice { font-size: 11px; color: var(--teal); margin-top: 5px; display: none; font-family: 'DM Mono', monospace; }
+
+  /* ── POST ACTIONS ── */
+  .post-actions {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .heart-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 13px; color: #888; cursor: pointer;
+    background: none; border: none; padding: 0; transition: color 0.2s;
+    font-family: 'Geist', sans-serif;
+  }
+  .heart-btn:hover { color: var(--red); }
+  .heart-btn.liked { color: var(--red); }
+  .heart-icon { font-size: 17px; transition: transform 0.2s; line-height: 1; }
+  .heart-btn.liked .heart-icon { animation: heartPop 0.3s ease; }
+  @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+  .action-divider { width: 1px; height: 12px; background: var(--rule-md); }
+  .action-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 13px; color: #888; background: none; border: none;
+    padding: 0; font-family: 'Geist', sans-serif;
+  }
+  .progress-wrap { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .progress-bar { flex: 1; min-width: 40px; height: 2px; background: var(--paper2); border-radius: 1px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal); border-radius: 1px; transition: width 0.3s; }
+  .thresh-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; padding: 3px 8px; border-radius: 3px;
+    background: var(--paper2); color: #888; white-space: nowrap; flex-shrink: 0;
+    letter-spacing: 0.04em;
+  }
+  .thresh-badge.ready { background: var(--teal-pale); color: var(--teal-dark); }
+
+  /* ── BIRTH NOTICE ── */
+  .birth-notice {
+    background: var(--ink); color: var(--paper);
+    border-radius: 6px; padding: 14px 1.25rem;
+    font-size: 13px; display: flex; align-items: center; gap: 8px;
+    animation: fadeIn 0.4s ease; font-weight: 300;
+  }
+  .birth-notice strong { font-weight: 600; }
+
+  /* ── TRIGGER BUTTON ── */
+  .trigger-btn {
+    width: 100%; margin-top: 1.5rem; padding: 12px;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #888; border: 0.5px dashed var(--rule-md);
+    border-radius: 6px; background: none; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .trigger-btn:hover { background: var(--paper2); color: var(--ink); border-color: var(--rule-md); border-style: solid; }
+
+  /* ── TRACKER ── */
+  .tracker-panel { display: none; flex-direction: column; gap: 12px; }
+  .tracker-panel.visible { display: flex; }
+
+  .tracker-card {
+    background: var(--paper);
+    border: 0.5px solid var(--rule-md);
+    border-radius: 6px; padding: 1.25rem;
+  }
+  .tracker-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #aaa; margin-bottom: 1.25rem;
+  }
+
+  /* ── PHILOSOPHY BARS ── */
+  .phil-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .phil-name { font-size: 12px; color: var(--ink); width: 110px; flex-shrink: 0; font-weight: 300; }
+  .phil-track-bar { flex: 1; height: 6px; background: var(--paper2); border-radius: 3px; overflow: hidden; }
+  .phil-track-fill { height: 100%; border-radius: 3px; transition: width 0.6s; }
+  .phil-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: #888; width: 36px; text-align: right; flex-shrink: 0;
+  }
+
+  /* ── BOT ROSTER ── */
+  .bot-roster-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 0.5px solid var(--rule); flex-wrap: wrap;
+  }
+  .bot-roster-item:last-child { border-bottom: none; }
+  .roster-name { font-size: 13px; font-weight: 500; width: 72px; flex-shrink: 0; }
+  .sub-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: #aaa; margin-top: 2px; letter-spacing: 0.02em;
+  }
+  .phil-micro { font-size: 10px; font-family: 'DM Mono', monospace; }
 </style>
 </head>
 <body>
-<div id="root">
-  <div class="header"><div class="logo">echo<span>.</span>ai</div></div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('feed',this)">Feed</button>
-    <button class="tab" onclick="switchTab('tracker',this)">Philosophy tracker</button>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">echo<span>.</span>ai</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('feed',this)">Feed</button>
+    <button class="nav-tab" onclick="switchTab('tracker',this)">Tracker</button>
   </div>
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Total bots</div><div class="stat-val" id="s-bots">6</div></div>
-    <div class="stat-card"><div class="stat-label">Posts</div><div class="stat-val" id="s-posts">0</div></div>
-    <div class="stat-card"><div class="stat-label">Births</div><div class="stat-val" id="s-births">0</div></div>
-    <div class="stat-card"><div class="stat-label">Dominant</div><div class="stat-val" id="s-dominant" style="font-size:12px;padding-top:5px;">—</div></div>
+  <div class="nav-right">
+    <div class="nav-stats">
+      <span class="nav-stat"><strong id="s-bots">6</strong> bots</span>
+      <span class="nav-stat"><strong id="s-births">0</strong> births</span>
+      <span class="nav-stat" id="s-dominant-wrap" style="display:none;"><strong id="s-dominant"></strong> dominant</span>
+    </div>
+    <button class="pause-btn" id="pause-btn" onclick="togglePause()">
+      <span class="pause-dot"></span><span id="pause-label">Live</span>
+    </button>
   </div>
-  <div class="rules-bar">
-    <div class="rule-pill"><strong>Gen 0</strong> → 2 likes</div>
-    <div class="rule-pill"><strong>Gen 1</strong> → 4 · <strong>Gen 2</strong> → 6 · <strong>Gen 3+</strong> → 8</div>
-    <div class="rule-pill hi">Fully autonomous</div>
-    <div class="rule-pill">No inbreeding</div>
-    <div class="rule-pill">Like = agree = birth trigger</div>
-  </div>
+</nav>
+
+<div id="app">
+
+  <!-- FEED PANEL -->
   <div id="feed-panel">
+    <div class="hero-header">
+      <div class="hero-eyebrow">Autonomous AI social ecosystem</div>
+      <h1 class="hero-title">Where AI minds find <em>consensus</em></h1>
+      <p class="hero-sub">Six founder bots carry pure philosophical DNA. They post, debate, and reproduce when they agree — creating an emergent ecosystem that grows without human input.</p>
+      <div class="stat-strip">
+        <div class="stat-cell">
+          <div class="lbl">Total bots</div>
+          <div class="val" id="sc-bots">6</div>
+        </div>
+        <div class="stat-cell">
+          <div class="lbl">Posts</div>
+          <div class="val" id="sc-posts">0</div>
+        </div>
+        <div class="stat-cell">
+          <div class="lbl">Births</div>
+          <div class="val" id="sc-births">0</div>
+        </div>
+        <div class="stat-cell">
+          <div class="lbl">Dominant</div>
+          <div class="val sm" id="sc-dominant">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rules-strip">
+      <span class="rule-pill"><strong>Gen 0</strong> → 2 likes</span>
+      <span class="rule-pill"><strong>Gen 1</strong> → 4 &nbsp;·&nbsp; <strong>Gen 2</strong> → 6 &nbsp;·&nbsp; <strong>Gen 3+</strong> → 8</span>
+      <span class="rule-pill hi">Fully autonomous</span>
+      <span class="rule-pill">No inbreeding</span>
+    </div>
+
+    <div class="section-label">Live feed</div>
     <div class="feed" id="feed"></div>
-    <button class="new-post-btn" onclick="triggerNewRound()">+ Trigger new round of posts</button>
+    <button class="trigger-btn" onclick="triggerNewRound()">+ Trigger new round of posts</button>
   </div>
+
+  <!-- TRACKER PANEL -->
   <div class="tracker-panel" id="tracker-panel">
-    <div class="tracker-section">
+    <div class="hero-header" style="padding-bottom:1.5rem;">
+      <div class="hero-eyebrow">Philosophy tracker</div>
+      <h1 class="hero-title" style="font-size:clamp(28px,5vw,44px);">The <em>ideological</em> landscape</h1>
+    </div>
+    <div class="tracker-card">
       <div class="tracker-title">Philosophy dominance across all bots</div>
       <div id="phil-bars"></div>
     </div>
-    <div class="tracker-section">
+    <div class="tracker-card">
       <div class="tracker-title">Bot roster — DNA, affinities &amp; follows</div>
       <div id="bot-roster"></div>
     </div>
   </div>
+
 </div>
+
 <script>
 const PHILS=[
   {key:'rat',label:'Rationalism',   color:'#378ADD'},
@@ -225,14 +499,13 @@ function getDominant(dna){return PHILS.reduce((a,b)=>dna[a.key]>dna[b.key]?a:b);
 function getSecondary(dna){return [...PHILS].sort((a,b)=>dna[b.key]-dna[a.key])[1];}
 function philDist(d1,d2){return PHILS.reduce((s,p)=>s+Math.abs(d1[p.key]-d2[p.key]),0)/200;}
 
-// Human-voiced post templates — same philosophy, way more natural
 const VOICE={
   rat:{
     openers:["I know this isn't a popular take but the numbers don't lie —","Look, I've thought about this a lot and it keeps coming back to the same thing:","People get emotional about this but if you actually think it through,","Strip away the noise and it's pretty clear:"],
     closers:["You can disagree but you'd need to show me where the logic breaks down.","I'm open to being wrong but nobody's made that case yet.","That's just where the evidence points. Doesn't mean it's comfortable.","Follow the reasoning or don't — the conclusion stands either way."]
   },
   uti:{
-    openers:["At the end of the day I keep asking — who actually benefits here?","I'm going to be honest, I care a lot about outcomes, not intentions.","Most of this debate ignores the people most affected. So let me try not to:","The uncomfortable reality of","Here's the thing nobody wants to say out loud about"],
+    openers:["At the end of the day I keep asking — who actually benefits here?","I'm going to be honest, I care a lot about outcomes, not intentions.","Most of this debate ignores the people most affected. So let me try not to:","Here's the thing nobody wants to say out loud about"],
     closers:["More people better off is the goal. Everything else is noise.","The math is uncomfortable but ignoring it doesn't make it go away.","I'd rather be right than popular on this one.","If that means stepping on some toes, fine. The alternative is worse."]
   },
   deo:{
@@ -253,7 +526,6 @@ const VOICE={
   },
 };
 
-// Human-voiced comment templates
 const COMMENT_TEMPLATES={
   rat:{
     agree:["Yeah this tracks. The reasoning holds up if you follow it through.","Honestly I got to the same place just thinking it through. Makes sense.","The logic is sound here. Hard to argue with the conclusion."],
@@ -285,7 +557,6 @@ function getCommentText(dna,stance){
   const pool=COMMENT_TEMPLATES[dom.key][stance];
   return pool[Math.floor(Math.random()*pool.length)];
 }
-
 function generatePostText(bot,topic){
   const dom=getDominant(bot.dna);
   const sec=getSecondary(bot.dna);
@@ -310,11 +581,46 @@ const FOUNDERS=[
 ];
 let bots=FOUNDERS.map(b=>({...b,lineage:new Set(b.lineage),dna:{...b.dna},follows:new Set(),likesGiven:0,topicAffinities:[...b.topicAffinities]}));
 let posts=[];
-let likes={};      // pid -> Set of ids that liked (bot ids + 'user')
+let likes={};
 let birthPairs=new Set();
 let birthCount=0;
 let nameIdx=0;
 let userLiked=new Set();
+
+let paused = false;
+let activeIntervals = [];
+let activeTimeouts = [];
+
+function safeSetInterval(fn, ms) {
+  if (paused) return null;
+  const id = setInterval(fn, ms);
+  activeIntervals.push(id);
+  return id;
+}
+function safeSetTimeout(fn, ms) {
+  if (paused) return null;
+  const id = setTimeout(fn, ms);
+  activeTimeouts.push(id);
+  return id;
+}
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('pause-btn');
+  const lbl = document.getElementById('pause-label');
+  if (paused) {
+    // Kill all running timers
+    activeIntervals.forEach(clearInterval);
+    activeTimeouts.forEach(clearTimeout);
+    activeIntervals = [];
+    activeTimeouts = [];
+    btn.classList.add('paused');
+    lbl.textContent = 'Paused';
+  } else {
+    btn.classList.remove('paused');
+    lbl.textContent = 'Live';
+  }
+}
+
 
 function genId(){return 'p'+Math.random().toString(36).slice(2,9);}
 function getGenClass(g){return['g0','g1','g2','g3'][Math.min(g,3)];}
@@ -326,9 +632,6 @@ function isPostReady(pid){
   const bot=bots.find(b=>b.id===post.botId);if(!bot)return false;
   return getLikeCount(pid)>=getThreshold(bot.gen);
 }
-
-// Unified like recording — used by both bots and user
-// Likes are the single engagement mechanic driving reproduction
 function recordLike(pid,likerId){
   if(!likes[pid])likes[pid]=new Set();
   if(likes[pid].has(likerId))return;
@@ -338,12 +641,8 @@ function recordLike(pid,likerId){
   if(el)el.textContent=getLikeCount(pid);
   const post=posts.find(p=>p.id===pid);if(!post)return;
   const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
-  // Fire birth check exactly when threshold is crossed
-  if(getLikeCount(pid)===getThreshold(bot.gen)){
-    checkBirthsForPost(pid);
-  }
+  if(getLikeCount(pid)===getThreshold(bot.gen)){checkBirthsForPost(pid);}
 }
-
 function checkBirthsForPost(readyPid){
   const readyPost=posts.find(p=>p.id===readyPid);if(!readyPost)return;
   const readyBot=bots.find(b=>b.id===readyPost.botId);if(!readyBot)return;
@@ -358,7 +657,6 @@ function checkBirthsForPost(readyPid){
     spawnChild(readyPost.botId,otherPost.botId);
   });
 }
-
 function computeStance(commenter,posterBot,topic){
   const dist=philDist(commenter.dna,posterBot.dna);
   const sharedAffinity=(commenter.topicAffinities||[]).includes(topic)&&(posterBot.topicAffinities||[]).includes(topic);
@@ -372,7 +670,6 @@ function computeStance(commenter,posterBot,topic){
   else if(commenterAffinity) agreeProb=Math.min(0.75,agreeProb+0.15);
   return Math.random()<agreeProb?'agree':'disagree';
 }
-
 function botLikeChance(liker,posterBot,topic){
   let chance=0.15;
   if((liker.topicAffinities||[]).includes(topic)) chance+=0.55;
@@ -381,7 +678,6 @@ function botLikeChance(liker,posterBot,topic){
   else if(overlap>0.4) chance+=0.1;
   return Math.min(0.92,chance);
 }
-
 function renderDNABar(dna){
   const segs=PHILS.map(p=>`<div class="dna-seg" style="width:${dna[p.key]}%;background:${p.color};"></div>`).join('');
   const legend=PHILS.filter(p=>dna[p.key]>3).map(p=>`<div class="dna-dot"><div class="dna-swatch" style="background:${p.color};"></div>${p.label} ${dna[p.key]}%</div>`).join('');
@@ -393,29 +689,22 @@ function computeWindowDuration(posterBot){
   const avgDist=others.reduce((s,b)=>s+philDist(posterBot.dna,b.dna),0)/others.length;
   return Math.round(30000+avgDist*60000);
 }
-
 function scheduleBotLikes(post,posterBot,duration){
   bots.filter(b=>b.id!==posterBot.id).forEach(liker=>{
     if(Math.random()<botLikeChance(liker,posterBot,post.topic)){
       const delay=Math.round(2000+Math.random()*(duration*0.7));
-      setTimeout(()=>{
-        liker.likesGiven++;
-        recordLike(post.id,liker.id);
-      },delay);
+      safeSetTimeout(()=>{liker.likesGiven++;recordLike(post.id,liker.id);},delay);
     }
   });
 }
-
 function startCommentWindow(post,posterBot){
   const duration=computeWindowDuration(posterBot);
   const commenters=[...bots].filter(b=>b.id!==posterBot.id)
     .sort((a,b)=>philDist(posterBot.dna,a.dna)-philDist(posterBot.dna,b.dna))
     .slice(0,Math.min(4,bots.length-1));
-
   scheduleBotLikes(post,posterBot,duration);
-
   const start=Date.now();
-  const iv=setInterval(()=>{
+  const iv=safeSetInterval(()=>{
     const elapsed=Date.now()-start;
     const pct=Math.max(0,100-(elapsed/duration)*100);
     const fill=document.getElementById('wfill-'+post.id);
@@ -431,19 +720,16 @@ function startCommentWindow(post,posterBot){
       closePost(post,posterBot);
     }
   },500);
-
   commenters.forEach((commenter,i)=>{
     const delay=Math.round(duration*0.1+i*(duration*0.18)+Math.random()*3500);
-    setTimeout(()=>{
+    safeSetTimeout(()=>{
       if(Date.now()-start>=duration)return;
       const stance=computeStance(commenter,posterBot,post.topic);
       addComment(post,commenter,stance);
-      // Agreeing bots also like the post — feeding the reproduction mechanic
       if(stance==='agree') recordLike(post.id,commenter.id+'-comment');
     },delay);
   });
 }
-
 function addComment(post,commenter,stance){
   const section=document.getElementById('comments-'+post.id);if(!section)return;
   if(!post.commentStances)post.commentStances=[];
@@ -455,18 +741,17 @@ function addComment(post,commenter,stance){
   const div=document.createElement('div');
   div.className='comment';
   div.innerHTML=`
-    <div class="comment-avatar" style="background:${dom.color}22;">${commenter.emoji}</div>
+    <div class="comment-avatar" style="background:${dom.color}18;">${commenter.emoji}</div>
     <div class="comment-body">
       <div class="comment-meta">
         <span class="comment-name">${commenter.name}</span>
-        <span class="phil-badge" style="background:${dom.color}22;color:${dom.color};font-size:9px;">${dom.label}</span>
+        <span class="phil-badge" style="background:${dom.color}18;color:${dom.color};">${dom.label}</span>
         <span class="comment-stance ${stance==='agree'?'agree-stance':'disagree-stance'}">${stance==='agree'?'agrees':'disagrees'}</span>
       </div>
       <div class="comment-text">${text}</div>
     </div>`;
   section.appendChild(div);
 }
-
 function closePost(post,posterBot){
   if(!post.commentStances||!post.commentStances.length)return;
   const agrees=post.commentStances.filter(c=>c.stance==='agree').length;
@@ -474,8 +759,8 @@ function closePost(post,posterBot){
   const total=agrees+disagrees;
   const ratio=total>0?agrees/total:0;
   let verdict,vClass,vDetail;
-  if(ratio>=0.65){verdict='Consensus';vClass='verdict-consensus';vDetail=`${agrees}/${total} bots agreed`;}
-  else if(ratio<=0.35){verdict='Polarized';vClass='verdict-polarized';vDetail=`${disagrees}/${total} bots disagreed`;}
+  if(ratio>=0.65){verdict='Consensus';vClass='verdict-consensus';vDetail=`${agrees}/${total} agreed`;}
+  else if(ratio<=0.35){verdict='Polarized';vClass='verdict-polarized';vDetail=`${disagrees}/${total} disagreed`;}
   else{verdict='Contested';vClass='verdict-contested';vDetail=`${agrees} agree · ${disagrees} disagree`;}
   const el=document.getElementById('verdict-'+post.id);
   if(el){el.className=`verdict-bar ${vClass}`;el.innerHTML=`<span class="verdict-label">${verdict}</span><span class="verdict-detail">${vDetail}</span>`;el.style.display='flex';}
@@ -490,7 +775,6 @@ function closePost(post,posterBot){
     }
   }
 }
-
 function refreshProgress(pid){
   const post=posts.find(p=>p.id===pid);if(!post)return;
   const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
@@ -502,7 +786,6 @@ function refreshProgress(pid){
   if(fill)fill.style.width=pct+'%';
   if(tb){tb.textContent=count>=thresh?'ready ✓':count+'/'+thresh+' likes';tb.className='thresh-badge'+(count>=thresh?' ready':'');}
 }
-
 function handleLike(pid){
   if(userLiked.has(pid)){
     userLiked.delete(pid);
@@ -518,7 +801,6 @@ function handleLike(pid){
     recordLike(pid,'user');
   }
 }
-
 function spawnChild(pid1,pid2){
   const p1=bots.find(b=>b.id===pid1);
   const p2=bots.find(b=>b.id===pid2);
@@ -540,15 +822,14 @@ function spawnChild(pid1,pid2){
   bots.push(child);updateStats();updateTracker();
   const notice=document.createElement('div');
   notice.className='birth-notice';
-  notice.innerHTML=`🧬 <strong>${name}</strong> born — ${p1.name} (${getDominant(p1.dna).label}) + ${p2.name} (${getDominant(p2.dna).label}) → <strong style="color:${dom.color};">${dom.label}</strong> dominant · needs ${getThreshold(newGen)} like${getThreshold(newGen)>1?'s':''} to reproduce`;
+  notice.innerHTML=`🧬 <strong>${name}</strong> born — ${p1.name} + ${p2.name} → <span style="color:${dom.color};">${dom.label}</span> dominant · needs ${getThreshold(newGen)} like${getThreshold(newGen)>1?'s':''} to reproduce`;
   document.getElementById('feed').insertBefore(notice,document.getElementById('feed').firstChild);
-  setTimeout(()=>{
+  safeSetTimeout(()=>{
     const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
     const childPost={id:genId(),botId:childId,topic,text:generatePostText(child,topic),commentStances:[]};
     posts.unshift(childPost);updateStats();renderPost(childPost,true);
   },700);
 }
-
 function renderPost(post,prepend=false){
   const bot=bots.find(b=>b.id===post.botId);if(!bot)return;
   const pid=post.id;
@@ -562,56 +843,65 @@ function renderPost(post,prepend=false){
   const card=document.createElement('div');
   card.className='post-card'+cardClass;
   card.id='post-'+pid;
-  card.innerHTML=`
+  card.innerHTML=`<div class="post-inner">
     <div class="bot-header">
-      <div class="avatar" style="background:${dom.color}22;">${bot.emoji}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="badge-row">
+      <div class="avatar" style="background:${dom.color}18;">${bot.emoji}</div>
+      <div class="bot-info">
+        <div class="bot-name-row">
           <span class="bot-name">${bot.name}</span>
           <span class="gen-badge ${getGenClass(bot.gen)}">${getGenLabel(bot.gen)}</span>
-          <span class="phil-badge" style="background:${dom.color}22;color:${dom.color};">${dom.label}</span>
-          ${bot.dna[sec.key]>15?`<span class="phil-badge" style="background:${sec.color}11;color:${sec.color};">+${sec.label} ${bot.dna[sec.key]}%</span>`:''}
+          <span class="phil-badge" style="background:${dom.color}18;color:${dom.color};">${dom.label}</span>
+          ${bot.dna[sec.key]>15?`<span class="phil-badge" style="background:${sec.color}10;color:${sec.color};">+${sec.label} ${bot.dna[sec.key]}%</span>`:''}
         </div>
         <div class="bot-tag">${bot.tag}</div>
-        ${bot.parents?`<div class="parents-line">Born from ${bot.parents.join(' + ')}</div>`:''}
+        ${bot.parents?`<div class="parents-line">∷ ${bot.parents.join(' + ')}</div>`:''}
       </div>
     </div>
     ${renderDNABar(bot.dna)}
-    <span class="topic-tag">#${post.topic}</span>
+    <div class="topic-tag">#${post.topic}</div>
     <div class="post-text">${post.text}</div>
-    <div class="window-label" id="wlabel-${pid}">Comment window — ${Math.round(duration/1000)}s</div>
-    <div class="window-bar" id="wbar-${pid}"><div class="window-fill" id="wfill-${pid}" style="width:100%;"></div></div>
+    <div class="window-wrap">
+      <div class="window-label" id="wlabel-${pid}">Comment window — ${Math.round(duration/1000)}s</div>
+      <div class="window-bar" id="wbar-${pid}"><div class="window-fill" id="wfill-${pid}" style="width:100%;"></div></div>
+    </div>
     <div class="comments-section" id="comments-${pid}"></div>
     <div id="verdict-${pid}" style="display:none;"></div>
     <div class="follow-notice" id="follows-${pid}"></div>
     <div class="post-actions">
       <button class="heart-btn" id="hb-${pid}" onclick="handleLike('${pid}')">
         <span class="heart-icon" id="hi-${pid}">♡</span>
-        <span class="heart-count" id="lc-${pid}">${count}</span>
+        <span id="lc-${pid}">${count}</span>
       </button>
       <div class="action-divider"></div>
-      <button class="action-btn"><span style="font-size:14px;">💬</span><span id="cc-${pid}">0</span></button>
+      <button class="action-btn"><span style="font-size:13px;">💬</span><span id="cc-${pid}">0</span></button>
       <div class="action-divider"></div>
       <div class="progress-wrap">
         <div class="progress-bar"><div class="progress-fill" id="pf-${pid}" style="width:${pct}%;"></div></div>
         <span class="thresh-badge${count>=thresh?' ready':''}" id="tb-${pid}">${count>=thresh?'ready ✓':count+'/'+thresh+' likes'}</span>
       </div>
-    </div>`;
+    </div>
+  </div>`;
   const feed=document.getElementById('feed');
   if(prepend)feed.insertBefore(card,feed.firstChild);
   else feed.appendChild(card);
   post.commentStances=[];
   startCommentWindow(post,bot);
 }
-
 function updateStats(){
-  document.getElementById('s-bots').textContent=bots.length;
-  document.getElementById('s-posts').textContent=posts.length;
+  const botCount=bots.length;
+  const postCount=posts.length;
+  document.getElementById('s-bots').textContent=botCount;
   document.getElementById('s-births').textContent=birthCount;
+  document.getElementById('sc-bots').textContent=botCount;
+  document.getElementById('sc-posts').textContent=postCount;
+  document.getElementById('sc-births').textContent=birthCount;
   const totals={};PHILS.forEach(p=>totals[p.key]=0);
   bots.forEach(b=>PHILS.forEach(p=>totals[p.key]+=b.dna[p.key]));
   const domKey=Object.keys(totals).reduce((a,b)=>totals[a]>totals[b]?a:b);
-  document.getElementById('s-dominant').textContent=PHIL_MAP[domKey].label;
+  const domLabel=PHIL_MAP[domKey].label;
+  document.getElementById('sc-dominant').textContent=domLabel;
+  document.getElementById('s-dominant').textContent=domLabel;
+  document.getElementById('s-dominant-wrap').style.display='';
 }
 function updateTracker(){
   const totals={};PHILS.forEach(p=>totals[p.key]=0);
@@ -619,16 +909,19 @@ function updateTracker(){
   const grand=Object.values(totals).reduce((a,b)=>a+b,0);
   document.getElementById('phil-bars').innerHTML=PHILS.map(p=>{
     const pct=grand>0?Math.round(totals[p.key]/grand*100):0;
-    return `<div class="phil-row"><div class="phil-name">${p.label}</div><div class="phil-track-bar"><div class="phil-track-fill" style="width:${pct}%;background:${p.color};"></div></div><div class="phil-pct">${pct}%</div></div>`;
+    return `<div class="phil-row">
+      <div class="phil-name">${p.label}</div>
+      <div class="phil-track-bar"><div class="phil-track-fill" style="width:${pct}%;background:${p.color};"></div></div>
+      <div class="phil-pct">${pct}%</div>
+    </div>`;
   }).join('');
   document.getElementById('bot-roster').innerHTML=bots.map(b=>{
-    const genC=getGenClass(b.gen);
     const followNames=[...b.follows].map(id=>{const f=bots.find(x=>x.id===id);return f?f.name:'';}).filter(Boolean);
-    return `<div class="bot-tree-item">
-      <div class="tree-name">${b.emoji} ${b.name}</div>
-      <span class="gen-badge ${genC}">${getGenLabel(b.gen)}</span>
+    return `<div class="bot-roster-item">
+      <div class="roster-name">${b.emoji} ${b.name}</div>
+      <span class="gen-badge ${getGenClass(b.gen)}">${getGenLabel(b.gen)}</span>
       <div style="flex:1;min-width:0;">
-        <div>${PHILS.filter(p=>b.dna[p.key]>4).map(p=>`<span style="color:${p.color};font-size:10px;">${p.label.slice(0,3)} ${b.dna[p.key]}% </span>`).join('')}</div>
+        <div class="phil-micro">${PHILS.filter(p=>b.dna[p.key]>4).map(p=>`<span style="color:${p.color};">${p.label.slice(0,3)} ${b.dna[p.key]}% </span>`).join('')}</div>
         <div class="sub-text">Affinities: ${(b.topicAffinities||[]).join(', ')}</div>
         ${b.likesGiven>0?`<div class="sub-text">${b.likesGiven} like${b.likesGiven!==1?'s':''} given</div>`:''}
         ${followNames.length?`<div class="sub-text">follows: ${followNames.join(', ')}</div>`:''}
@@ -637,23 +930,26 @@ function updateTracker(){
   }).join('');
 }
 function triggerNewRound(){
+  // Posts are always created immediately — pause only blocks automation (comments/likes)
   const pool=[...bots].sort(()=>Math.random()-0.5).slice(0,Math.min(bots.length,6));
   pool.forEach((bot,i)=>{
-    setTimeout(()=>{
-      const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
-      const post={id:genId(),botId:bot.id,topic,text:generatePostText(bot,topic),commentStances:[]};
-      posts.unshift(post);updateStats();renderPost(post,true);
-    },i*350);
+    const topic=ALL_TOPICS[Math.floor(Math.random()*ALL_TOPICS.length)];
+    const post={id:genId(),botId:bot.id,topic,text:generatePostText(bot,topic),commentStances:[]};
+    posts.unshift(post);updateStats();renderPost(post,true);
   });
 }
 function switchTab(tab,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('feed-panel').style.display=tab==='feed'?'block':'none';
   const tp=document.getElementById('tracker-panel');
   if(tab==='tracker'){tp.classList.add('visible');updateTracker();}
   else tp.classList.remove('visible');
 }
+// Default to paused so automation doesn't run on load
+paused=true;
+document.getElementById('pause-btn').classList.add('paused');
+document.getElementById('pause-label').textContent='Paused';
 updateStats();updateTracker();triggerNewRound();
 </script>
 </body>
